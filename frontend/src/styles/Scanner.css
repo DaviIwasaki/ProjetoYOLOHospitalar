@@ -1,0 +1,183 @@
+/* Layout base */
+.scanner-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* ===== Header ===== */
+.scanner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.scanner-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-arrow {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.scanner-logo {
+  width: 24px;
+  height: 24px;
+}
+
+.scanner-header-left h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ===== Main ===== */
+.scanner-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.scanner-preview {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.scanner-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ===== Botão ===== */
+.scanner-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  width: 90%;
+  max-width: 320px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 24px;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.scanner-btn:hover {
+  background-color: #005fc7;
+}
+
+/* ===== Produtos detectados ===== */
+.scanner-products {
+  width: 100%;
+  max-width: 360px;
+}
+
+.scanner-products h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.product-item {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.product-info p {
+  margin: 0;
+  line-height: 1.2;
+}
+
+.product-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.product-id {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.product-arrow {
+  font-size: 1.3rem;
+  color: #999;
+}
+
+.unrecognized-badge {
+  background-color: #ff4b4b;
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: 16px;
+  padding: 3px 8px;
+  position: absolute;
+  right: 32px;
+  top: 12px;
+}
+
+/* ===== Footer ===== */
+.scanner-footer {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #eee;
+  padding: 10px 0;
+  background-color: #fff;
+}
+
+.footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.footer-item.active {
+  color: #007bff;
+}
+
+.footer-item span {
+  font-size: 1.2rem;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 480px) {
+  .scanner-btn {
+    width: 95%;
+  }
+
+  .scanner-products {
+    width: 95%;
+  }
+
+  .scanner-header-left h2 {
+    font-size: 0.9rem;
+  }
+}

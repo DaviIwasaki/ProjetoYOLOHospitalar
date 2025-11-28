@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard-wrapper {
+  width: 95%;
+  min-height: 95%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 70px; /* espaço para o menu inferior */
+}
+
+/* ===== HEADER ===== */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dashboard-logo {
+  width: 36px;
+  height: 36px;
+}
+
+.dashboard-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.user-section .profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+/* ===== STATUS CARDS ===== */
+.status-section {
+  display: flex;
+  justify-content: space-around;
+  margin: 1rem 0;
+  padding: 0 1rem;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.status-card {
+  flex: 1;
+  min-width: 150px;
+  padding: 1rem;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+}
+
+.status-card.blue {
+  background-color: #007bff;
+}
+
+.status-card.yellow {
+  background-color: #fcd77d;
+  color: #333;
+}
+
+.status-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.status-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+.status-sub {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* ===== QUICK ACTIONS ===== */
+.actions-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.8rem;
+  padding: 0 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.action-card {
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.action-card.blue {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.action-card.gray {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+.action-card.white {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.action-card.green {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.action-card.red {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.action-icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+}
+
+/* ===== CHART SECTION ===== */
+.chart-section {
+  padding: 0 1rem;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.chart-container {
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.chart-subtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.chart-wrapper {
+  height: 200px;
+}
+
+/* ===== BOTTOM NAV ===== */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem 0;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #777;
+  font-size: 0.8rem;
+}
+
+.nav-item.active {
+  color: #007bff;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  margin-bottom: 0.2rem;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 480px) {
+  .status-card {
+    min-width: 45%;
+  }
+
+  .chart-wrapper {
+    height: 180px;
+  }
+}
+

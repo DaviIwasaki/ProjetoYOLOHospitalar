@@ -1,0 +1,150 @@
+.register-exit-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f9fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===== Cabeçalho ===== */
+.header {
+  width: 100%;
+  max-width: 420px;
+  background-color: #fff;
+  border-bottom: 1px solid #e6e8ec;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-logo {
+  width: 28px;
+  height: 28px;
+}
+
+.header-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.page-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* ===== Conteúdo ===== */
+.exit-content {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px 16px;
+  box-sizing: border-box;
+}
+
+.exit-form {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: black;
+}
+
+.input-container {
+  position: relative;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 10px 12px 10px 34px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  font-size: 14px;
+  color: black;
+  background-color: rgba(235, 227, 227, 0.486);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-container input:focus {
+  border-color: #007bff;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: #888;
+}
+
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  padding: 10px 12px;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #007bff;
+}
+
+/* ===== Botão ===== */
+.exit-button {
+  background-color: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.exit-button:hover {
+  background-color: #d32f2f;
+}
+
+@media (max-width: 480px) {
+  .register-exit-page {
+    padding-bottom: 40px;
+  }
+
+  .exit-content {
+    padding: 14px;
+  }
+
+  .exit-form {
+    padding: 16px;
+  }
+}

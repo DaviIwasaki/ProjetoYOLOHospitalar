@@ -1,0 +1,142 @@
+/* ======== Login Page Styles ======== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.login-wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+}
+
+/* Cartão central */
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  padding: 2.2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cabeçalho */
+.login-header {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.login-logo {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 0.5rem;
+}
+
+.login-title {
+  color: #007bff;
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.login-subtitle {
+  color: #111;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Formulário */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Labels */
+.login-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Inputs */
+.login-input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  font-size: 0.95rem;
+  color: #333;
+  transition: border-color 0.2s ease;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+/* Esqueceu a senha */
+.forgot-container {
+  text-align: right;
+  margin-top: -0.4rem;
+}
+
+.forgot-link {
+  color: #007bff;
+  font-size: 0.85rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+/* Botão de login */
+.login-button {
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.login-button:hover {
+  background-color: #0064d6;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.5rem;
+    max-width: 90%;
+  }
+
+  .login-title {
+    font-size: 1.2rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .login-input {
+    font-size: 0.9rem;
+  }
+}

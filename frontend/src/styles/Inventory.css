@@ -1,0 +1,211 @@
+.inventory-container {
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+  color: #222;
+}
+
+/* ===== Header ===== */
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.inventory-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back-arrow {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.inventory-logo {
+  width: 24px;
+  height: 24px;
+}
+
+.inventory-header-left h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ===== Search bar ===== */
+.inventory-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.search-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.search-icon {
+  color: #777;
+  font-size: 1.1rem;
+  margin-right: 8px;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+}
+
+.filter-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #005fc7;
+}
+
+/* ===== Cards ===== */
+.inventory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.inventory-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s;
+}
+
+.inventory-card:hover {
+  transform: scale(1.01);
+}
+
+/* ===== Card Header ===== */
+.inventory-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sku {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #007bff;
+  margin: 0;
+}
+
+/* ===== Badge ===== */
+.status-badge {
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 14px;
+  color: #fff;
+}
+
+.status-badge.green {
+  background-color: #2ecc71;
+}
+
+.status-badge.orange {
+  background-color: #f1c40f;
+  color: #222;
+}
+
+.status-badge.red {
+  background-color: #e74c3c;
+}
+
+/* ===== Stock Info ===== */
+.item-name {
+  font-size: 0.9rem;
+  color: #444;
+  margin: 6px 0 10px 0;
+}
+
+.stock-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+/* ===== Last Movement ===== */
+.last-movement {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* ===== Button ===== */
+.history-btn {
+  width: 100%;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  color: #333;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.history-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.clock-icon {
+  font-size: 0.9rem;
+}
+
+/* ===== Responsividade ===== */
+@media (max-width: 480px) {
+  .inventory-container {
+    padding: 16px;
+  }
+
+  .inventory-header h2 {
+    font-size: 1rem;
+  }
+
+  .stock-info {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .history-btn {
+    font-size: 0.85rem;
+  }
+}

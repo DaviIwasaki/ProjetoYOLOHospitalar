@@ -1,0 +1,182 @@
+/* Scoped styles for NotRecognized page */
+.not-recognized-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  font-family: "Inter", sans-serif;
+  color: #222;
+  box-sizing: border-box;
+}
+
+/* ===== Standard header (shared style) ===== */
+.std-header {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #efeff2;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.std-header-left,
+.std-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.std-logo {
+  width: 34px;
+  height: 34px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ===== Main container ===== */
+.not-recognized-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 16px;
+  box-sizing: border-box;
+}
+
+.not-recognized-card {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  padding: 28px 20px;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+/* Icon and titles */
+.not-recognized-icon {
+  font-size: 44px;
+  color: #007bff;
+  margin-bottom: 18px;
+}
+
+.not-recognized-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.not-recognized-text {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 22px;
+  line-height: 1.5;
+}
+
+/* Buttons area */
+.not-recognized-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Generic button */
+.nr-btn {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+/* Primary (blue) */
+.nr-primary {
+  background-color: #007bff;
+  color: #fff;
+}
+.nr-primary:hover { background-color: #0064d6; }
+
+/* Secondary (light gray) */
+.nr-secondary {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+.nr-secondary:hover { background-color: #e8e9eb; }
+
+/* Outline */
+.nr-outline {
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+}
+.nr-outline:hover { background-color: #fafafa; }
+
+/* ===== Footer (standard) ===== */
+.std-footer {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-top: 1px solid #efeff2;
+  background: #fff;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  position: sticky;
+  bottom: 0;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: #007bff;
+  font-weight: 700;
+}
+
+/* small icon size */
+.nav-icon {
+  font-size: 18px;
+}
+
+/* ===== Responsiveness ===== */
+@media (max-width: 480px) {
+  .not-recognized-card {
+    padding: 22px 16px;
+  }
+
+  .not-recognized-title {
+    font-size: 18px;
+  }
+
+  .not-recognized-text {
+    font-size: 13px;
+  }
+
+  .nr-btn {
+    font-size: 14px;
+    padding: 11px 12px;
+  }
+
+  .std-header { padding: 8px 12px; }
+  .std-footer { padding: 8px 6px; }
+}
