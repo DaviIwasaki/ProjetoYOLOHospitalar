@@ -15,6 +15,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/scanner" element={<Scanner />} />
@@ -25,8 +26,7 @@ function App() {
         <Route path="/registerEntry" element={<RegisterEntry />} />
         <Route path="/notRecognized" element={<NotRecognized />} />
         <Route path="/registerExitSuccess" element={<RegisterExitSuccess />} />
-        <Route path="/RegisterEntrySuccess" element={<RegisterEntrySuccess />} />
-        {/* Outras rotas, como dashboard, virão depois */}
+        <Route path="/registerEntrySuccess" element={<RegisterEntrySuccess />} />
       </Routes>
     </Router>
   );
