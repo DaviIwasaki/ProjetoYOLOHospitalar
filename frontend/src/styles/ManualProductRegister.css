@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Reset Global Importante */
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Garante que o corpo da página não tenha rolagem extra */
+html, body {
+  height: 100%;
+  overflow: hidden; /* Trava a rolagem do navegador para focar no container */
+  background-color: #f7f9fc;
+}
+
+.mobile-container {
+  width: 100%;
+  max-width: 480px;
+  height: 100vh; /* Ocupa exatamente 100% da altura da tela */
+  margin: 0 auto;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column; /* Organiza: Topo -> Meio -> Fundo */
+  position: relative;
+  overflow: hidden; /* Corta qualquer coisa que tente sair da largura */
+  box-shadow: 0 0 20px rgba(0,0,0,0.05); /* Sombra para destacar no desktop */
+}
+
+/* ===== HEADER (Fixo no topo pelo Flexbox) ===== */
+.page-header {
+  flex-shrink: 0; /* Impede que o header seja esmagado */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 10;
+}
+
+.icon-btn-header.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  flex-grow: 1;
+  text-align: center;
+  margin-right: 28px; 
+}
+
+.header-spacer {
+  width: 24px;
+}
+
+/* ===== CONTENT SCROLL (O Miolo que rola) ===== */
+.content-scroll {
+  flex: 1; /* Ocupa todo o espaço sobrando entre Header e Footer */
+  overflow-y: auto; /* Habilita rolagem vertical APENAS aqui */
+  overflow-x: hidden; /* Proíbe rolagem horizontal */
+  padding: 1.5rem 1.2rem;
+  background-color: #fcfcfc;
+  
+  /* Rolagem suave no iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+.form-section {
+  margin-bottom: 1.8rem;
+  width: 100%; /* Garante que não estoure a largura */
+}
+
+.section-heading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%; /* Respeita o padding do container pai */
+  padding: 0.85rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  background-color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: #2196f3;
+}
+
+.form-input[type="date"] {
+  appearance: none;
+  color: #555;
+}
+
+/* ===== UPLOAD SECTION ===== */
+.upload-section {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.upload-box {
+  width: 100%;
+  border: 2px dashed #dbeafe;
+  background-color: #f0f7ff;
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  /* Garante que o conteúdo interno não quebre o layout */
+  display: flex;
+  justify-content: center;
+}
+
+.upload-box:active {
+  background-color: #e0f0ff;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  text-align: center;
+}
+
+.upload-icon {
+  stroke: #2196f3;
+}
+
+.upload-text {
+  color: #2196f3;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ===== DISCLAIMER TEXT ===== */
+.disclaimer-text {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 1rem;
+  padding: 0 0.5rem;
+  margin-bottom: 1rem; /* Margem extra no fim do conteúdo */
+}
+
+/* ===== FOOTER ACTIONS (Fixo no fundo pelo Flexbox) ===== */
+.footer-actions {
+  flex-shrink: 0; /* Impede que o footer suma */
+  width: 100%;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  padding: 1rem 1.2rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.btn-footer {
+  flex: 1;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  border: none;
+  white-space: nowrap; /* Impede texto de quebrar linha */
+}
+
+.btn-footer.cancel {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #555;
+}
+
+.btn-footer.save {
+  background-color: #2196f3;
+  color: #fff;
+  box-shadow: 0 2px 5px rgba(33, 150, 243, 0.3);
+}
+
+.btn-footer.save:active {
+  background-color: #1976d2;
+}

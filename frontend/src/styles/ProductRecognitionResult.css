@@ -1,0 +1,99 @@
+/* === ESPECÍFICO DA PÁGINA === */
+
+/* Reset de botão para ícone */
+.icon-btn-reset {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+/* Container da Imagem */
+.recog-image-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.recog-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* Proporção 4:3 ou similar para foto de produto */
+  aspect-ratio: 4/3; 
+  object-fit: cover;
+}
+
+/* Caixa Azul  */
+.bounding-box {
+  position: absolute;
+  top: 20%;
+  left: 25%;
+  width: 50%;
+  height: 50%;
+  border: 3px solid #2196f3;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2000px rgba(0,0,0,0.3); 
+  pointer-events: none; 
+}
+
+/* Textos */
+.recog-info {
+  margin-bottom: 2rem;
+}
+
+.product-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.3rem;
+}
+
+.confidence-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.success-msg {
+  font-size: 0.95rem;
+  color: #2196f3; /* Azul */
+  font-weight: 600;
+}
+
+/* Botões */
+.recog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Botão Outline (Fundo branco, borda cinza) */
+.btn-outline {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  width: 100%;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-outline:active {
+  background-color: #f5f5f5;
+}

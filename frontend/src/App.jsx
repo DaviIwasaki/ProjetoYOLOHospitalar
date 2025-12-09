@@ -10,6 +10,12 @@ import RegisterEntry from "./pages/RegisterEntry";
 import NotRecognized from "./pages/NotRecognized";
 import RegisterExitSuccess from "./pages/RegisterExitSuccess";
 import RegisterEntrySuccess from "./pages/RegisterEntrySuccess";
+import AdminProPainel from "./pages/AdminProPainel";
+import EditProduct from "./pages/EditProduct";
+import AdminProDashboard from "./pages/AdminProDashboard";
+import ManualProductRegister from "./pages/ManualProductRegister";   
+import CreateKit from "./pages/CreateKit"; 
+import ProductRecognitionResult from "./pages/ProductRecognitionResult"; 
 
 function App() {
   return (
@@ -27,6 +33,12 @@ function App() {
         <Route path="/notRecognized" element={<NotRecognized />} />
         <Route path="/registerExitSuccess" element={<RegisterExitSuccess />} />
         <Route path="/registerEntrySuccess" element={<RegisterEntrySuccess />} />
+        <Route path="/adminProPainel" element={<AdminProPainel />} />
+        <Route path="/editProduct" element={<EditProduct />} />
+        <Route path="/adminProDashboard" element={<AdminProDashboard />} />
+        <Route path="/manualProductRegister" element={<ManualProductRegister />} />
+        <Route path="/createKit" element={<CreateKit />} />
+        <Route path="/productRecognitionResult" element={<ProductRecognitionResult />} />
       </Routes>
     </Router>
   );

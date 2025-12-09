@@ -1,0 +1,80 @@
+/* === ESTRUTURA MESTRA  === */
+.page-wrapper {
+  width: 100%;
+  max-width: 480px; 
+  height: 100dvh;   
+  margin: 0 auto;   
+  background-color: #ffffff;
+  
+  display: flex;          
+  flex-direction: column; 
+  
+  position: relative;
+  overflow: hidden; 
+  box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* === HEADER === */
+.page-header {
+  flex-shrink: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 10;
+}
+
+/* === CONTEÚDO === */
+.page-content {
+  flex: 1; 
+  overflow-y: auto;   
+  overflow-x: hidden; 
+  padding: 1.2rem;
+  padding-bottom: 2rem;
+  width: 100%;
+  background-color: #f9fbfc;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Para centralizar conteúdo  */
+.page-content.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* === FOOTER / NAVBAR  === */
+.fixed-footer {
+  flex-shrink: 0; 
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  
+  padding-top: 10px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom)); /* iPhone */
+  
+  z-index: 100;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #999;
+  font-size: 0.7rem;
+  cursor: pointer;
+  flex: 1;
+}
+.nav-item.active { color: #007bff; }
+.nav-text { margin-top: 4px; font-weight: 600; font-size: 10px; }
+
+/* === UTILITÁRIOS === */
+.section-gap { display: flex; gap: 10px; margin-bottom: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }

@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/Inventory.css";
+import "../AppLayout.css";
 import logo from "../assets/yolo-hospitalar-logo.png";
 import { FiSearch, FiSliders } from "react-icons/fi";
 import { FaClock } from "react-icons/fa";

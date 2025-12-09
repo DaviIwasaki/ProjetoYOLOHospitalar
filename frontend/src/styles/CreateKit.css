@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Reset Básico */
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Impede rolagem global */
+  background-color: #f4f7f9;
+}
+
+/* === ESTRUTURA BLINDADA (Flexbox Vertical) === */
+.kit-wrapper {
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh; /* Altura exata da viewport */
+  margin: 0 auto;
+  background-color: #f4f7f9;
+  
+  display: flex;
+  flex-direction: column; /* Header em cima, Footer embaixo */
+  
+  position: relative;
+  overflow: hidden;
+}
+
+/* === HEADER === */
+.kit-header {
+  flex-shrink: 0; /* Não encolhe */
+  height: 60px;
+  background-color: #ffffff;
+  padding: 0 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 20;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  padding: 0;
+  color: #333;
+}
+
+.kit-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+/* === MAIN (Área que Rola) === */
+.kit-content {
+  flex: 1; /* Ocupa todo o espaço livre */
+  overflow-y: auto; /* Permite rolagem vertical */
+  overflow-x: hidden;
+  padding: 1.2rem;
+  /* Espaço visual no final */
+  padding-bottom: 2rem; 
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* === SEÇÕES E CARDS === */
+.kit-section {
+  background: #ffffff;
+  padding: 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  border: 1px solid #f0f0f0;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  outline: none;
+  color: #333;
+}
+
+.form-input.bg-white {
+  background-color: #ffffff;
+}
+
+/* === LISTA DE ITENS === */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kit-item {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.item-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.item-code {
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* Controle de Quantidade */
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.qty-btn {
+  border: none;
+  background: none;
+  color: #007bff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.qty-value {
+  font-size: 0.95rem;
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Botão Adicionar (Dashed) */
+.add-product-btn {
+  width: 100%;
+  background-color: #f0f7ff;
+  border: 2px dashed #cce5ff;
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #007bff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  transition: background 0.2s;
+}
+
+.add-product-btn:active {
+  background-color: #e0f0ff;
+}
+
+.icon-circle {
+  background: #ffffff;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  box-shadow: 0 2px 4px rgba(0,123,255,0.1);
+}
+
+/* === FOOTER  === */
+.kit-footer {
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  padding: 1rem;
+  /* Proteção iPhone */
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  
+  display: flex;
+  gap: 1rem;
+  z-index: 50;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  color: #555;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-save {
+  flex: 1;
+  padding: 1rem;
+  border-radius: 12px;
+  border: none;
+  background: #007bff;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
