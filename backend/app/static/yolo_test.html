@@ -81,11 +81,11 @@
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const base64 = canvas.toDataURL('image/jpeg', 0.4);
+          const base64 = canvas.toDataURL('image/jpeg', 0.5);
           socket.emit('frame', { image: base64 });
           console.log('3. Frame enviado! Tamanho: ' + base64.length);
         }
-      }, 500);  // 500ms para FPS melhor
+      }, 300);  // 300ms para FPS melhor
 
       socket.on('detection_result', (data) => {
         console.log('4. Resultado recebido do backend!');

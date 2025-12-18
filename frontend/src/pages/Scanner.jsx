@@ -1,107 +1,178 @@
-import React from "react";
+// frontend/src/pages/Scanner.jsx
+
+import React, { useEffect, useRef, useState } from "react";
+import io from "socket.io-client";
 import "../styles/Scanner.css";
-import scanImage from "../assets/scan-preview.png"; 
-import logo from "../assets/yolo-hospitalar-logo.png";
+import scanImage from "../assets/scan-preview.png";
 
 const Scanner = () => {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const socketRef = useRef(null);
+
+  const [detectedItems, setDetectedItems] = useState([]);
+  const [scanning, setScanning] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("Pronto para escanear");
+
+  const maletaId = 1;
+
+  useEffect(() => {
+    // Conecta ao backend via Socket.IO
+    const backendUrl = window.location.origin; // pega localhost ou ngrok
+    const socket = io(backendUrl, {
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: 10,
+    });
+
+    socketRef.current = socket;
+
+    socket.on("connect", () => {
+      console.log("Socket conectado ao backend!");
+      setStatusMessage("Conectado ao servidor YOLO");
+    });
+
+    socket.on("connect_error", (err) => {
+      console.log("Erro de conexão:", err);
+      setStatusMessage("Erro de conexão com o servidor");
+    });
+
+    socket.on("detection_result", (data) => {
+      console.log("Resultado YOLO:", data);
+      if (data.success && data.total > 0) {
+        setDetectedItems(data.detected);
+        drawBoxes(data.bboxes);
+        setStatusMessage(`${data.total} objeto(s) detectado(s)`);
+      } else if (data.success) {
+        setDetectedItems([]);
+        clearCanvas();
+        setStatusMessage("Nenhum objeto detectado");
+      } else {
+        setStatusMessage("Erro no processamento");
+      }
+    });
+
+    return () => socket.disconnect();
+  }, []);
+
+  const drawBoxes = (boxes) => {
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    if (!canvas || !video) return;
+
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    boxes.forEach((box) => {
+      ctx.strokeStyle = "#00ff00";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
+      ctx.fillStyle = "#00ff00";
+      ctx.font = "20px Arial";
+      ctx.fillText(`${box.class} ${(box.conf * 100).toFixed(0)}%`, box.x1 + 10, box.y1 + 30);
+    });
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+
+  const startScanning = async () => {
+    setScanning(true);
+    setDetectedItems([]);
+    setStatusMessage("Abrindo câmera...");
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+      setStatusMessage("Câmera aberta! Enviando frames...");
+
+      // Loop contínuo de captura e envio
+      const interval = setInterval(() => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const base64 = canvas.toDataURL("image/jpeg", 0.4);
+
+        // Debug
+        console.log("Enviando frame, tamanho:", base64.length);
+
+        socketRef.current.emit("frame", {
+          image: base64,
+          maleta_id: maletaId,
+        });
+      }, 500);
+
+      videoRef.current.interval = interval;
+    } catch (err) {
+      setStatusMessage("Erro na câmera: " + err.message);
+      setScanning(false);
+    }
+  };
+
+  const stopScanning = () => {
+    setScanning(false);
+    setStatusMessage("Escaneamento parado");
+
+    if (videoRef.current?.srcObject) {
+      videoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    }
+
+    if (videoRef.current?.interval) {
+      clearInterval(videoRef.current.interval);
+    }
+
+    clearCanvas();
+    setDetectedItems([]);
+  };
+
   return (
     <div className="scanner-container">
-      
-      {/*  TOPO */}
-      <header className="scanner-header">
-        <div className="scanner-header-left">
-          <button className="icon-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-          </button>
-          <img src={logo} alt="Logo" className="scanner-logo" />
-          <h2>YOLO Hospitalar</h2>
-        </div>
-        <div className="scanner-header-right">
-          <button className="icon-btn">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      {/* CONTEÚDO */}
-      <main className="scanner-content">
-        
-        <div className="camera-section">
-          <div className="scanner-frame">
-            <img src={scanImage} alt="Preview" className="scan-img" />
-            <div className="scan-overlay">
-              <div className="scan-line"></div>
-            </div>
+      <div className="camera-section">
+        <div className="scanner-frame" style={{ position: "relative" }}>
+          <video ref={videoRef} style={{ width: "100%", display: scanning ? "block" : "none" }} playsInline muted />
+          <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: scanning ? "block" : "none" }} />
+          {!scanning && <img src={scanImage} alt="Preview" className="scan-img" />}
+          <div className="scan-overlay">
+            <div className="scan-line"></div>
           </div>
-          <button className="scanner-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="4"></circle>
-            </svg>
-            Start Scanning
-          </button>
         </div>
 
-        <section className="results-section">
-          <h3 className="section-title">Detected Products</h3>
-          <div className="product-list">
-            <div className="product-item">
-              <div className="product-info">
-                <p className="product-name">YOLO Hand Sanitizer</p>
-                <p className="product-id">YH-2023-ABC</p>
-              </div>
-              <div className="product-action">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </div>
-            </div>
+        <button className="scanner-btn" onClick={scanning ? stopScanning : startScanning}>
+          {scanning ? "Parar Escaneamento" : "Iniciar Escaneamento"}
+        </button>
 
-            <div className="product-item">
-              <div className="product-info">
-                <p className="product-name">Unknown Item</p>
-                <p className="product-id">SG-456-XYZ</p>
-              </div>
-              <div className="product-action">
-                <span className="badge-error">Unrecognized</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+        <p>{statusMessage}</p>
+      </div>
 
-      {/* RODAPÉ  */}
-      <footer className="bottom-nav">
-        <div className="nav-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-          <p className="nav-text">Home</p>
+      <section className="results-section">
+        <h3>Itens Detectados</h3>
+        <div className="product-list">
+          {detectedItems.length === 0 ? (
+            <p>Nenhum item detectado</p>
+          ) : (
+            detectedItems.map((item, i) => (
+              <div className="product-item" key={i}>
+                <div className="product-info">
+                  <p className="product-name">{item.class}</p>
+                  <p className="product-id">Confiança: {(item.confidence * 100).toFixed(0)}%</p>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-        <div className="nav-item active">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle>
-          </svg>
-          <p className="nav-text">Scan</p>
-        </div>
-        <div className="nav-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <p className="nav-text">History</p>
-        </div>
-        <div className="nav-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          <p className="nav-text">Profile</p>
-        </div>
-      </footer>
+      </section>
     </div>
   );
 };
