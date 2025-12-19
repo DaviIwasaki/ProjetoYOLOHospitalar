@@ -133,9 +133,8 @@ const ProductRecognitionResult = () => {
           <button
             className="btn-primary"
             onClick={() => {
-              // Salva o product no localStorage para a próxima tela usar
               localStorage.setItem("currentProduct", JSON.stringify(product));
-              localStorage.setItem("capturedImageForEntry", capturedImage); // opcional, se quiser mostrar imagem lá
+              localStorage.setItem("capturedImageForEntry", capturedImage);
               window.location.href = "/product-profile";
             }}
           >

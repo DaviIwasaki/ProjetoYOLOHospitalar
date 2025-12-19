@@ -444,3 +444,89 @@ def registrar_saida():
         "movimentacao": movimentacao.to_dict(),
         "novo_estoque": instrumento.quantidade_estoque
     }), 201
+
+# ==================== DETALHES DO PRODUTO E HISTÓRICO ====================
+
+@api_bp.route('/products/<int:product_id>', methods=['GET'])
+def get_product_detail(product_id):
+    instrumento = Instrumento.query.get(product_id)
+    if not instrumento:
+        return jsonify({"success": False, "message": "Produto não encontrado"}), 404
+
+    # Busca histórico de movimentações
+    movimentacoes = Movimentacao.query.filter_by(instrumento_id=product_id)\
+                                     .order_by(Movimentacao.data.desc())\
+                                     .all()
+
+    history = []
+    for m in movimentacoes:
+        history.append({
+            "date": m.data.strftime("%Y-%m-%d"),
+            "type": "Entry" if m.tipo == "entrada" else "Exit",
+            "qty": m.quantidade,
+            "user": m.responsavel or "Sistema",
+            "notes": m.notas or ""
+        })
+
+    return jsonify({
+        "success": True,
+        "product": {
+            "id": instrumento.id,
+            "nome": instrumento.nome,
+            "codigo_interno": instrumento.codigo_interno,
+            "categoria": instrumento.categoria.nome if instrumento.categoria else "Sem categoria",
+            "quantidade_estoque": instrumento.quantidade_estoque,
+            "estoque_minimo": instrumento.estoque_minimo,
+            "estoque_maximo": instrumento.estoque_maximo,
+            "validade": instrumento.validade.strftime("%Y-%m-%d") if instrumento.validade else None,
+        },
+        "history": history
+    })
+    
+
+# ==================== LISTA DE INVENTÁRIO ====================
+
+@api_bp.route('/inventory', methods=['GET'])
+def get_inventory():
+    search = request.args.get('search', '').strip()
+    query = Instrumento.query
+
+    if search:
+        query = query.filter(
+            Instrumento.nome.ilike(f"%{search}%") |
+            Instrumento.codigo_interno.ilike(f"%{search}%")
+        )
+
+    instrumentos = query.order_by(Instrumento.nome).all()
+
+    inventory_list = []
+    for inst in instrumentos:
+        # Última movimentação
+        ultima_mov = Movimentacao.query.filter_by(instrumento_id=inst.id)\
+                                       .order_by(Movimentacao.data.desc())\
+                                       .first()
+
+        status = "In Stock"
+        color = "green"
+        if inst.quantidade_estoque == 0:
+            status = "Out of Stock"
+            color = "red"
+        elif inst.quantidade_estoque < inst.estoque_minimo:
+            status = "Low Stock"
+            color = "orange"
+
+        inventory_list.append({
+            "id": inst.id,
+            "sku": inst.codigo_interno,
+            "name": inst.nome,
+            "current": inst.quantidade_estoque,
+            "ideal": inst.estoque_minimo,  # ou pode ser outro campo no futuro
+            "movement": ultima_mov.data.strftime("%Y-%m-%d %H:%M") if ultima_mov else "Sem movimentação",
+            "status": status,
+            "color": color
+        })
+
+    return jsonify({
+        "success": True,
+        "items": inventory_list
+    })
