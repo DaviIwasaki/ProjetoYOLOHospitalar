@@ -307,11 +307,13 @@ def debug_usuarios():
 # ==================== ================= ====================
 @api_bp.route('/products/by_yolo_class/<string:yolo_class>', methods=['GET'])
 def get_product_by_yolo_class(yolo_class):
-    # Primeiro tenta achar no banco por uma coluna que você pode adicionar: yolo_class
-    # Se não tiver, faça busca por nome parecido ou crie mock
+    # Normaliza: "cell_phone" ou "cell phone" → "Cell Phone"
+    normalized_name = yolo_class.replace("_", " ").strip().title()
+
+    # Busca case-insensitive e exata no nome
     instrumento = Instrumento.query.filter(
-        db.func.lower(Instrumento.nome) == db.func.lower(yolo_class.replace("_", " "))
-    ).first_or_none()
+        db.func.lower(Instrumento.nome) == db.func.lower(normalized_name)
+    ).first()
 
     if instrumento:
         return jsonify({
@@ -320,17 +322,18 @@ def get_product_by_yolo_class(yolo_class):
             "codigo_interno": instrumento.codigo_interno,
             "quantidade_estoque": instrumento.quantidade_estoque,
             "estoque_minimo": instrumento.estoque_minimo,
-            "descricao": "Produto real do hospital"
+            "estoque_maximo": instrumento.estoque_maximo,
+            "descricao": "Produto encontrado no banco (teste YOLO COCO)"
         })
 
-    # Mock para testes com YOLO padrão
+    # Mock só se realmente não achar
     return jsonify({
         "id": None,
-        "nome": yolo_class.replace("_", " ").title(),
-        "codigo_interno": "TEST-" + yolo_class.upper(),
-        "quantidade_estoque": 12,
+        "nome": normalized_name,
+        "codigo_interno": "TEMP-" + yolo_class.upper().replace(" ", ""),
+        "quantidade_estoque": 10,
         "estoque_minimo": 5,
-        "descricao": "Produto de teste usando classe COCO do YOLOv8n"
+        "descricao": "Classe YOLO detectada, mas não cadastrada no sistema"
     })
     
 @api_bp.route('/movimentacoes/entrada', methods=['POST'])
