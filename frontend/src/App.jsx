@@ -57,7 +57,11 @@ function App() {
           path="/register-entry-success"
           element={<RegisterEntrySuccess />}
         />
-        <Route path="/register-exit" element={<RegisterExit />} />{" "}
+        <Route path="/register-exit" element={<RegisterExit />} />
+        <Route
+          path="/register-exit-success"
+          element={<RegisterExitSuccess />}
+        />
         <Route path="/product-profile" element={<ProductProfile />} />
       </Routes>
     </Router>

@@ -304,7 +304,7 @@ def debug_usuarios():
     users = User.query.all()
     return jsonify([{"id": u.id, "username": u.username} for u in users])
 
-# ==================== ================= ====================
+# ==================== BUSCAR PRODUTO POR CLASSE YOLO ====================
 @api_bp.route('/products/by_yolo_class/<string:yolo_class>', methods=['GET'])
 def get_product_by_yolo_class(yolo_class):
     # Normaliza: "cell_phone" ou "cell phone" → "Cell Phone"
@@ -335,6 +335,8 @@ def get_product_by_yolo_class(yolo_class):
         "estoque_minimo": 5,
         "descricao": "Classe YOLO detectada, mas não cadastrada no sistema"
     })
+    
+# ==================== REGISTRAR ENTRADA ====================
     
 @api_bp.route('/movimentacoes/entrada', methods=['POST'])
 def registrar_entrada():
@@ -383,6 +385,62 @@ def registrar_entrada():
     return jsonify({
         "success": True,
         "message": "Entrada registrada com sucesso!",
+        "movimentacao": movimentacao.to_dict(),
+        "novo_estoque": instrumento.quantidade_estoque
+    }), 201
+
+# ==================== REGISTRAR SAÍDA ====================
+
+@api_bp.route('/movimentacoes/saida', methods=['POST'])
+def registrar_saida():
+    data = request.get_json()
+
+    instrumento_id = data.get('instrumento_id')
+    quantidade = data.get('quantidade')
+    responsavel = data.get('responsavel', 'Usuário Anônimo')
+    destino = data.get('destino')
+    notas = data.get('notas')
+    data_movimentacao = data.get('data')  # opcional
+
+    if not instrumento_id or not quantidade:
+        return jsonify({"success": False, "message": "Instrumento e quantidade obrigatórios"}), 400
+
+    try:
+        quantidade = int(quantidade)
+        if quantidade <= 0:
+            return jsonify({"success": False, "message": "Quantidade deve ser positiva"}), 400
+    except ValueError:
+        return jsonify({"success": False, "message": "Quantidade inválida"}), 400
+
+    instrumento = Instrumento.query.get(instrumento_id)
+    if not instrumento:
+        return jsonify({"success": False, "message": "Instrumento não encontrado"}), 404
+
+    if instrumento.quantidade_estoque < quantidade:
+        return jsonify({"success": False, "message": "Estoque insuficiente!"}), 400
+
+    # Cria movimentação
+    movimentacao = Movimentacao(
+        instrumento_id=instrumento_id,
+        tipo='saida',
+        quantidade=quantidade,
+        responsavel=responsavel,
+        origem_destino=destino,
+        notas=notas
+    )
+
+    if data_movimentacao:
+        movimentacao.data = datetime.fromisoformat(data_movimentacao.replace('Z', '+00:00'))
+
+    # Atualiza estoque
+    instrumento.quantidade_estoque -= quantidade
+
+    db.session.add(movimentacao)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Saída registrada com sucesso!",
         "movimentacao": movimentacao.to_dict(),
         "novo_estoque": instrumento.quantidade_estoque
     }), 201
