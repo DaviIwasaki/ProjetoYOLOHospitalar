@@ -1,4 +1,5 @@
 # app/routes/api.py
+from asyncio import current_task
 from flask import Blueprint, request, jsonify
 from app import db
 from app.models import maleta_instrumento
@@ -488,45 +489,57 @@ def get_product_detail(product_id):
 
 @api_bp.route('/inventory', methods=['GET'])
 def get_inventory():
-    search = request.args.get('search', '').strip()
-    query = Instrumento.query
+    try:
+        search = request.args.get('search', '').strip()
+        query = Instrumento.query
 
-    if search:
-        query = query.filter(
-            Instrumento.nome.ilike(f"%{search}%") |
-            Instrumento.codigo_interno.ilike(f"%{search}%")
-        )
+        if search:
+            query = query.filter(
+                Instrumento.nome.ilike(f"%{search}%") |
+                Instrumento.codigo_interno.ilike(f"%{search}%")
+            )
 
-    instrumentos = query.order_by(Instrumento.nome).all()
+        instrumentos = query.order_by(Instrumento.nome).all()
 
-    inventory_list = []
-    for inst in instrumentos:
-        # Última movimentação
-        ultima_mov = Movimentacao.query.filter_by(instrumento_id=inst.id)\
-                                       .order_by(Movimentacao.data.desc())\
-                                       .first()
+        inventory_list = []
+        for inst in instrumentos:
+            # Última movimentação (pode ser None)
+            ultima_mov = Movimentacao.query.filter_by(instrumento_id=inst.id)\
+                                           .order_by(Movimentacao.data.desc())\
+                                           .first()
 
-        status = "In Stock"
-        color = "green"
-        if inst.quantidade_estoque == 0:
-            status = "Out of Stock"
-            color = "red"
-        elif inst.quantidade_estoque < inst.estoque_minimo:
-            status = "Low Stock"
-            color = "orange"
+            status = "In Stock"
+            color = "green"
+            if inst.quantidade_estoque == 0:
+                status = "Out of Stock"
+                color = "red"
+            elif inst.quantidade_estoque < inst.estoque_minimo:
+                status = "Low Stock"
+                color = "orange"
 
-        inventory_list.append({
-            "id": inst.id,
-            "sku": inst.codigo_interno,
-            "name": inst.nome,
-            "current": inst.quantidade_estoque,
-            "ideal": inst.estoque_minimo,  # ou pode ser outro campo no futuro
-            "movement": ultima_mov.data.strftime("%Y-%m-%d %H:%M") if ultima_mov else "Sem movimentação",
-            "status": status,
-            "color": color
+            movement_date = "Sem movimentação"
+            if ultima_mov and ultima_mov.data:
+                movement_date = ultima_mov.data.strftime("%Y-%m-%d %H:%M")
+
+            inventory_list.append({
+                "id": inst.id,
+                "sku": inst.codigo_interno,
+                "name": inst.nome,
+                "current": inst.quantidade_estoque,
+                "ideal": inst.estoque_minimo,
+                "movement": movement_date,
+                "status": status,
+                "color": color
+            })
+
+        return jsonify({
+            "success": True,
+            "items": inventory_list
         })
 
-    return jsonify({
-        "success": True,
-        "items": inventory_list
-    })
+    except Exception as e:
+        current_task.logger.error(f"Erro no endpoint /inventory: {str(e)}")
+        return jsonify({
+            "success": False,
+            "message": "Erro interno ao carregar inventário"
+        }), 500
