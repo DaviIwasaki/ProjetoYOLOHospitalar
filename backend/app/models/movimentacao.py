@@ -1,3 +1,4 @@
+# app/models/movimentacao.py
 from .. import db
 from datetime import datetime
 
@@ -5,16 +6,24 @@ class Movimentacao(db.Model):
     __tablename__ = 'movimentacoes'
     id = db.Column(db.Integer, primary_key=True)
     instrumento_id = db.Column(db.Integer, db.ForeignKey('instrumentos.id'), nullable=False)
-    maleta_id = db.Column(db.Integer, db.ForeignKey('maletas.id'), nullable=True)
-    tipo = db.Column(db.String(20), nullable=False)  # entrada, saida, transferencia
+    tipo = db.Column(db.String(20), nullable=False)  # 'entrada' ou 'saida'
     quantidade = db.Column(db.Integer, nullable=False)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    data_hora = db.Column(db.DateTime, default=datetime.utcnow)
-    localizacao = db.Column(db.String(100), nullable=True)
+    data = db.Column(db.DateTime, default=datetime.utcnow)
+    responsavel = db.Column(db.String(100), nullable=False)
+    origem_destino = db.Column(db.String(100), nullable=True)
+    notas = db.Column(db.Text, nullable=True)
+    maleta_id = db.Column(db.Integer, db.ForeignKey('maletas.id'), nullable=True)  # opcional
 
     instrumento = db.relationship('Instrumento', backref='movimentacoes')
-    maleta = db.relationship('Maleta', backref='movimentacoes')
-    usuario = db.relationship('User', backref='movimentacoes')
 
-    def __repr__(self):
-        return f"<Movimentacao {self.tipo} {self.quantidade} {self.instrumento.nome}>"
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "instrumento_nome": self.instrumento.nome,
+            "tipo": self.tipo,
+            "quantidade": self.quantidade,
+            "data": self.data.isoformat(),
+            "responsavel": self.responsavel,
+            "origem_destino": self.origem_destino,
+            "notas": self.notas
+        }

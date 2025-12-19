@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Scanner from "./pages/Scanner";
@@ -13,9 +13,9 @@ import RegisterEntrySuccess from "./pages/RegisterEntrySuccess";
 import AdminProPainel from "./pages/AdminProPainel";
 import EditProduct from "./pages/EditProduct";
 import AdminProDashboard from "./pages/AdminProDashboard";
-import ManualProductRegister from "./pages/ManualProductRegister";   
-import CreateKit from "./pages/CreateKit"; 
-import ProductRecognitionResult from "./pages/ProductRecognitionResult"; 
+import ManualProductRegister from "./pages/ManualProductRegister";
+import CreateKit from "./pages/CreateKit";
+import ProductRecognitionResult from "./pages/ProductRecognitionResult";
 
 function App() {
   return (
@@ -32,14 +32,33 @@ function App() {
         <Route path="/registerEntry" element={<RegisterEntry />} />
         <Route path="/notRecognized" element={<NotRecognized />} />
         <Route path="/registerExitSuccess" element={<RegisterExitSuccess />} />
-        <Route path="/registerEntrySuccess" element={<RegisterEntrySuccess />} />
+        <Route
+          path="/registerEntrySuccess"
+          element={<RegisterEntrySuccess />}
+        />
         <Route path="/adminProPainel" element={<AdminProPainel />} />
         <Route path="/editProduct" element={<EditProduct />} />
         <Route path="/adminProDashboard" element={<AdminProDashboard />} />
-        <Route path="/manualProductRegister" element={<ManualProductRegister />} />
+        <Route
+          path="/manualProductRegister"
+          element={<ManualProductRegister />}
+        />
         <Route path="/createKit" element={<CreateKit />} />
-        <Route path="/productRecognitionResult" element={<ProductRecognitionResult />} />
-        <Route path="/recognition-result" element={<ProductRecognitionResult />} />
+        <Route
+          path="/productRecognitionResult"
+          element={<ProductRecognitionResult />}
+        />
+        <Route
+          path="/recognition-result"
+          element={<ProductRecognitionResult />}
+        />
+        <Route path="/register-entry" element={<RegisterEntry />} />
+        <Route
+          path="/register-entry-success"
+          element={<RegisterEntrySuccess />}
+        />
+        <Route path="/register-exit" element={<RegisterExit />} />{" "}
+        <Route path="/product-profile" element={<ProductProfile />} />
       </Routes>
     </Router>
   );

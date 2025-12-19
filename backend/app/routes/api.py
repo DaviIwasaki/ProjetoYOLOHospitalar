@@ -8,6 +8,8 @@ from app.models import (
 )
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+from ..models.instrumento import Instrumento
+from ..models.movimentacao import Movimentacao
 
 api_bp = Blueprint('api', __name__)
 
@@ -309,7 +311,7 @@ def get_product_by_yolo_class(yolo_class):
     # Se não tiver, faça busca por nome parecido ou crie mock
     instrumento = Instrumento.query.filter(
         db.func.lower(Instrumento.nome) == db.func.lower(yolo_class.replace("_", " "))
-    ).first()
+    ).first_or_none()
 
     if instrumento:
         return jsonify({
@@ -330,3 +332,54 @@ def get_product_by_yolo_class(yolo_class):
         "estoque_minimo": 5,
         "descricao": "Produto de teste usando classe COCO do YOLOv8n"
     })
+    
+@api_bp.route('/movimentacoes/entrada', methods=['POST'])
+def registrar_entrada():
+    data = request.get_json()
+
+    instrumento_id = data.get('instrumento_id')
+    quantidade = data.get('quantidade')
+    responsavel = data.get('responsavel', 'Usuário Anônimo')
+    origem = data.get('origem')
+    notas = data.get('notas')
+    data_movimentacao = data.get('data')  # opcional, senão usa agora
+
+    if not instrumento_id or not quantidade:
+        return jsonify({"success": False, "message": "Instrumento e quantidade são obrigatórios"}), 400
+
+    try:
+        quantidade = int(quantidade)
+        if quantidade <= 0:
+            return jsonify({"success": False, "message": "Quantidade deve ser positiva"}), 400
+    except ValueError:
+        return jsonify({"success": False, "message": "Quantidade inválida"}), 400
+
+    instrumento = Instrumento.query.get(instrumento_id)
+    if not instrumento:
+        return jsonify({"success": False, "message": "Instrumento não encontrado"}), 404
+
+    # Cria movimentação
+    movimentacao = Movimentacao(
+        instrumento_id=instrumento_id,
+        tipo='entrada',
+        quantidade=quantidade,
+        responsavel=responsavel,
+        origem_destino=origem,
+        notas=notas
+    )
+
+    if data_movimentacao:
+        movimentacao.data = datetime.fromisoformat(data_movimentacao.replace('Z', '+00:00'))
+
+    # Atualiza estoque
+    instrumento.quantidade_estoque += quantidade
+
+    db.session.add(movimentacao)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Entrada registrada com sucesso!",
+        "movimentacao": movimentacao.to_dict(),
+        "novo_estoque": instrumento.quantidade_estoque
+    }), 201

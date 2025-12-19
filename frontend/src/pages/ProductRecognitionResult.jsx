@@ -37,7 +37,9 @@ const ProductRecognitionResult = () => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `/api/products/by_yolo_class/${encodeURIComponent(detectedItem.class)}`
+          `/api/products/by_yolo_class/${encodeURIComponent(
+            detectedItem.class
+          )}`
         );
 
         const data = await response.json();
@@ -130,33 +132,34 @@ const ProductRecognitionResult = () => {
         <div className="recog-actions">
           <button
             className="btn-primary"
-            onClick={() =>
-              navigate("/product-profile", {
-                state: { product },
-              })
-            }
+            onClick={() => {
+              // Salva o product no localStorage para a próxima tela usar
+              localStorage.setItem("currentProduct", JSON.stringify(product));
+              localStorage.setItem("capturedImageForEntry", capturedImage); // opcional, se quiser mostrar imagem lá
+              window.location.href = "/product-profile";
+            }}
           >
             Ver Detalhes
           </button>
 
           <button
             className="btn-outline"
-            onClick={() =>
-              navigate("/register-entry", {
-                state: { product, capturedImage },
-              })
-            }
+            onClick={() => {
+              localStorage.setItem("currentProduct", JSON.stringify(product));
+              localStorage.setItem("capturedImageForEntry", capturedImage);
+              window.location.href = "/register-entry";
+            }}
           >
             Registrar Entrada
           </button>
 
           <button
             className="btn-outline"
-            onClick={() =>
-              navigate("/register-exit", {
-                state: { product, capturedImage },
-              })
-            }
+            onClick={() => {
+              localStorage.setItem("currentProduct", JSON.stringify(product));
+              localStorage.setItem("capturedImageForEntry", capturedImage);
+              window.location.href = "/register-exit";
+            }}
           >
             Registrar Saída
           </button>

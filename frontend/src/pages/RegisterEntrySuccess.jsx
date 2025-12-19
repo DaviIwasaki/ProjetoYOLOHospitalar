@@ -1,28 +1,14 @@
 import React from "react";
-import "../styles/RegisterEntrySuccess.css";
-import { CheckCircle } from "lucide-react";
-import logo from "../assets/yolo-hospitalar-logo.png"; // ajuste o caminho se necessário
+import "../styles/RegisterEntrySuccess.css"; // opcional
 
-const RegisterEntrySuccess = () => {
+export default function RegisterEntrySuccess() {
   return (
-    <div className="register-entry-page">
-      {/* ===== HEADER ===== */}
-      <header className="re-header">
-        <img src={logo} alt="Che Lusso Logo" className="re-logo" />
-      </header>
-
-      {/* ===== MAIN CONTENT ===== */}
-      <main className="re-container">
-        <CheckCircle className="re-icon" />
-        <p className="re-text">Product entry successfully registered.</p>
-
-        <div className="re-buttons">
-          <button className="re-btn re-primary">Return to Dashboard</button>
-          <button className="re-btn re-outline">Register Another Entry</button>
-        </div>
-      </main>
+    <div className="success-page">
+      <h1>✅ Entrada Registrada com Sucesso!</h1>
+      <p>O estoque foi atualizado automaticamente.</p>
+      <button onClick={() => window.location.href = "/scanner"}>
+        Voltar ao Scanner
+      </button>
     </div>
   );
-};
-
-export default RegisterEntrySuccess;
+}
