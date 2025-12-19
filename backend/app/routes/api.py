@@ -301,3 +301,32 @@ def alertas_estoque():
 def debug_usuarios():
     users = User.query.all()
     return jsonify([{"id": u.id, "username": u.username} for u in users])
+
+# ==================== ================= ====================
+@api_bp.route('/products/by_yolo_class/<string:yolo_class>', methods=['GET'])
+def get_product_by_yolo_class(yolo_class):
+    # Primeiro tenta achar no banco por uma coluna que você pode adicionar: yolo_class
+    # Se não tiver, faça busca por nome parecido ou crie mock
+    instrumento = Instrumento.query.filter(
+        db.func.lower(Instrumento.nome) == db.func.lower(yolo_class.replace("_", " "))
+    ).first()
+
+    if instrumento:
+        return jsonify({
+            "id": instrumento.id,
+            "nome": instrumento.nome,
+            "codigo_interno": instrumento.codigo_interno,
+            "quantidade_estoque": instrumento.quantidade_estoque,
+            "estoque_minimo": instrumento.estoque_minimo,
+            "descricao": "Produto real do hospital"
+        })
+
+    # Mock para testes com YOLO padrão
+    return jsonify({
+        "id": None,
+        "nome": yolo_class.replace("_", " ").title(),
+        "codigo_interno": "TEST-" + yolo_class.upper(),
+        "quantidade_estoque": 12,
+        "estoque_minimo": 5,
+        "descricao": "Produto de teste usando classe COCO do YOLOv8n"
+    })

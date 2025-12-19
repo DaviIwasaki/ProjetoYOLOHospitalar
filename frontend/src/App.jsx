@@ -39,6 +39,7 @@ function App() {
         <Route path="/manualProductRegister" element={<ManualProductRegister />} />
         <Route path="/createKit" element={<CreateKit />} />
         <Route path="/productRecognitionResult" element={<ProductRecognitionResult />} />
+        <Route path="/recognition-result" element={<ProductRecognitionResult />} />
       </Routes>
     </Router>
   );

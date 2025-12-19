@@ -1,102 +1,170 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../AppLayout.css";
 import "../styles/ProductRecognitionResult.css";
 
 const ProductRecognitionResult = () => {
+  const navigate = useNavigate();
+
+  const [recognitionData, setRecognitionData] = useState(null);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 1️⃣ Recupera dados do reconhecimento do localStorage
+  useEffect(() => {
+    const data = localStorage.getItem("recognitionData");
+
+    if (!data) {
+      navigate("/scanner");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(data);
+      setRecognitionData(parsed);
+    } catch (err) {
+      console.error("Erro ao ler recognitionData:", err);
+      navigate("/scanner");
+    }
+  }, [navigate]);
+
+  // 2️⃣ Busca produto no backend usando a classe YOLO
+  useEffect(() => {
+    if (!recognitionData) return;
+
+    const { detectedItem } = recognitionData;
+
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(
+          `/api/products/by_yolo_class/${encodeURIComponent(detectedItem.class)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Produto não encontrado");
+        }
+
+        setProduct(data);
+      } catch (err) {
+        console.warn("Produto não encontrado no banco, usando mock:", err);
+
+        // 🔧 MOCK TEMPORÁRIO (classes COCO)
+        setProduct({
+          id: null,
+          nome: detectedItem.class
+            .replace("_", " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase()),
+          codigo_interno: `TEMP-${detectedItem.class.toUpperCase()}`,
+          quantidade_estoque: Math.floor(Math.random() * 20) + 5,
+          estoque_minimo: 5,
+          descricao:
+            "Produto provisório para testes com YOLOv8n padrão (dataset COCO)",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [recognitionData]);
+
+  if (!recognitionData) {
+    return null;
+  }
+
+  const { detectedItem, capturedImage } = recognitionData;
+  const confidence = (detectedItem.confidence * 100).toFixed(1);
+
   return (
-    // 1. WRAPPER MESTRE 
     <div className="page-wrapper">
-      
-      {/* 2. HEADER FIXO */}
+      {/* HEADER */}
       <header className="page-header">
-        <button className="icon-btn-reset">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <button className="icon-btn-reset" onClick={() => navigate(-1)}>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#333"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
         </button>
-        <h1 className="header-title">Product Recognition</h1>
-        <div style={{width: 24}}></div> {/* Espaço vazio para centralizar título */}
+        <h1 className="header-title">Reconhecimento</h1>
+        <div style={{ width: 24 }} />
       </header>
 
-      {/* 3. CONTEÚDO ROLÁVEL (MAIN) */}
+      {/* CONTEÚDO */}
       <main className="page-content">
-        
-        {/* Imagem do Produto com Bounding Box */}
         <div className="recog-image-wrapper">
-          {/* Placeholder da imagem (substitua pelo src real) */}
-          <img 
-            src="src/assets/sample-product.jpg"
-            alt="Product Scan" 
-            className="recog-image" 
+          <img
+            src={capturedImage}
+            alt="Imagem capturada"
+            className="recog-image"
           />
-          {/* Caixa azul simulando a detecção da IA */}
-          <div className="bounding-box"></div>
         </div>
 
-        {/* Informações do Resultado */}
         <div className="recog-info">
-          <h2 className="product-title">Saline Solution 500ml</h2>
-          <p className="confidence-text">Confidence: 98.5%</p>
-          <p className="success-msg">Product successfully identified!</p>
+          {loading ? (
+            <p>Carregando dados do produto...</p>
+          ) : (
+            <>
+              <h2 className="product-title">{product?.nome}</h2>
+              <p className="confidence-text">Confiança: {confidence}%</p>
+              <p className="success-msg">
+                {product?.id
+                  ? "Produto identificado com sucesso!"
+                  : "Detectado (modo teste)"}
+              </p>
+            </>
+          )}
         </div>
 
-        {/* Botões de Ação */}
+        {/* AÇÕES */}
         <div className="recog-actions">
-          {/* Botão Azul (Primary) */}
-          <button className="btn-primary">
-            View Details
+          <button
+            className="btn-primary"
+            onClick={() =>
+              navigate("/product-profile", {
+                state: { product },
+              })
+            }
+          >
+            Ver Detalhes
           </button>
 
-          {/* Botão Branco (Outline) */}
-          <button className="btn-outline">
-            Register Entry
+          <button
+            className="btn-outline"
+            onClick={() =>
+              navigate("/register-entry", {
+                state: { product, capturedImage },
+              })
+            }
+          >
+            Registrar Entrada
           </button>
 
-          {/* Botão Branco (Outline) */}
-          <button className="btn-outline">
-            Register Exit
+          <button
+            className="btn-outline"
+            onClick={() =>
+              navigate("/register-exit", {
+                state: { product, capturedImage },
+              })
+            }
+          >
+            Registrar Saída
           </button>
         </div>
-
       </main>
 
-      {/* 4. FOOTER FIXO */}
-      <footer className="fixed-footer">
-        <div className="nav-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-          <span className="nav-text">Home</span>
-        </div>
-        
-        {/* Item Ativo (Inventory) */}
-        <div className="nav-item active">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"></path>
-            <line x1="6" y1="2" x2="6" y2="4"></line>
-            <line x1="14" y1="2" x2="14" y2="4"></line>
-          </svg>
-          <span className="nav-text">Inventory</span>
-        </div>
-
-        <div className="nav-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          <span className="nav-text">Profile</span>
-        </div>
-
-        <div className="nav-item">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-          </svg>
-          <span className="nav-text">Settings</span>
-        </div>
-      </footer>
+      {/* FOOTER (mantém o seu atual) */}
+      <footer className="fixed-footer">{/* footer */}</footer>
     </div>
   );
 };

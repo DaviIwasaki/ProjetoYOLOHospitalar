@@ -255,3 +255,17 @@ html, body {
   margin-top: 4px;
   font-weight: 500;
 }
+
+.product-item.clickable {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.product-item.clickable:hover {
+  background: rgba(0, 255, 0, 0.1);
+}
+
+.arrow-icon {
+  font-size: 24px;
+  color: #333;
+}

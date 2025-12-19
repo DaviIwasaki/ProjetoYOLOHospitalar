@@ -17,8 +17,7 @@ const Scanner = () => {
   const maletaId = 1;
 
   useEffect(() => {
-    // Conecta ao backend via Socket.IO
-    const backendUrl = window.location.origin; // pega localhost ou ngrok
+    const backendUrl = window.location.origin;
     const socket = io(backendUrl, {
       transports: ["websocket"],
       reconnection: true,
@@ -69,7 +68,11 @@ const Scanner = () => {
       ctx.strokeRect(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
       ctx.fillStyle = "#00ff00";
       ctx.font = "20px Arial";
-      ctx.fillText(`${box.class} ${(box.conf * 100).toFixed(0)}%`, box.x1 + 10, box.y1 + 30);
+      ctx.fillText(
+        `${box.class} ${(box.conf * 100).toFixed(0)}%`,
+        box.x1 + 10,
+        box.y1 + 30
+      );
     });
   };
 
@@ -86,16 +89,18 @@ const Scanner = () => {
     setStatusMessage("Abrindo câmera...");
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+      });
       videoRef.current.srcObject = stream;
       videoRef.current.play();
       setStatusMessage("Câmera aberta! Enviando frames...");
 
-      // Loop contínuo de captura e envio
       const interval = setInterval(() => {
         const video = videoRef.current;
         const canvas = canvasRef.current;
-        if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) return;
+        if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA)
+          return;
 
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -104,9 +109,6 @@ const Scanner = () => {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
         const base64 = canvas.toDataURL("image/jpeg", 0.4);
-
-        // Debug
-        console.log("Enviando frame, tamanho:", base64.length);
 
         socketRef.current.emit("frame", {
           image: base64,
@@ -137,19 +139,69 @@ const Scanner = () => {
     setDetectedItems([]);
   };
 
+  // Função auxiliar para capturar o frame atual com bounding boxes
+  const captureCurrentFrame = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+    return canvas.toDataURL("image/jpeg", 0.8); // boa qualidade para exibição
+  };
+
+  // Handler do clique no item detectado
+  const handleItemClick = (item) => {
+    const capturedImage = captureCurrentFrame();
+    if (!capturedImage) {
+      alert("Erro ao capturar imagem do frame");
+      return;
+    }
+
+    // Salva os dados no localStorage
+    localStorage.setItem(
+      "recognitionData",
+      JSON.stringify({
+        detectedItem: item,
+        capturedImage: capturedImage,
+        allDetected: detectedItems,
+        timestamp: Date.now(),
+      })
+    );
+
+    // Força navegação completa (necessário quando Flask serve o build)
+    window.location.href = "/recognition-result";
+  };
+
   return (
     <div className="scanner-container">
       <div className="camera-section">
         <div className="scanner-frame" style={{ position: "relative" }}>
-          <video ref={videoRef} style={{ width: "100%", display: scanning ? "block" : "none" }} playsInline muted />
-          <canvas ref={canvasRef} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: scanning ? "block" : "none" }} />
-          {!scanning && <img src={scanImage} alt="Preview" className="scan-img" />}
+          <video
+            ref={videoRef}
+            style={{ width: "100%", display: scanning ? "block" : "none" }}
+            playsInline
+            muted
+          />
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: scanning ? "block" : "none",
+            }}
+          />
+          {!scanning && (
+            <img src={scanImage} alt="Preview" className="scan-img" />
+          )}
           <div className="scan-overlay">
             <div className="scan-line"></div>
           </div>
         </div>
 
-        <button className="scanner-btn" onClick={scanning ? stopScanning : startScanning}>
+        <button
+          className="scanner-btn"
+          onClick={scanning ? stopScanning : startScanning}
+        >
           {scanning ? "Parar Escaneamento" : "Iniciar Escaneamento"}
         </button>
 
@@ -163,11 +215,18 @@ const Scanner = () => {
             <p>Nenhum item detectado</p>
           ) : (
             detectedItems.map((item, i) => (
-              <div className="product-item" key={i}>
+              <div
+                className="product-item clickable"
+                key={i}
+                onClick={() => handleItemClick(item)}
+              >
                 <div className="product-info">
                   <p className="product-name">{item.class}</p>
-                  <p className="product-id">Confiança: {(item.confidence * 100).toFixed(0)}%</p>
+                  <p className="product-id">
+                    Confiança: {(item.confidence * 100).toFixed(0)}%
+                  </p>
                 </div>
+                <div className="arrow-icon">→</div>
               </div>
             ))
           )}
