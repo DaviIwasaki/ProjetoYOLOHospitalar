@@ -1,0 +1,1 @@
+Adicionar python-dateutil ao Requierements

@@ -1,6 +1,6 @@
 # app/routes/api.py
 from asyncio import current_task
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from app import db
 from app.models import maleta_instrumento
 from app.models import (
@@ -11,6 +11,8 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 from ..models.instrumento import Instrumento
 from ..models.movimentacao import Movimentacao
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 api_bp = Blueprint('api', __name__)
 
@@ -98,59 +100,57 @@ def criar_instrumento():
         return jsonify({"message": "Código interno já existe"}), 409
 
 # ==================== MALETAS ====================
-@api_bp.route('/maletas', methods=['GET'])
-def listar_maletas():
-    maletas = Maleta.query.all()
-    result = []
-    for m in maletas:
-        composicao = db.session.execute(
-            maleta_instrumento.select().where(maleta_instrumento.c.maleta_id == m.id)
-        ).fetchall()
-        result.append({
-            "id": m.id,
-            "nome": m.nome,
-            "codigo_maleta": m.codigo_maleta,
-            "descricao": m.descricao,
-            "composicao": [
-                {
-                    "instrumento_id": row.instrumento_id,
-                    "nome": Instrumento.query.get(row.instrumento_id).nome,
-                    "quantidade_ideal": row.quantidade_ideal
-                } for row in composicao
-            ]
-        })
-    return jsonify(result)
-
 @api_bp.route('/maletas', methods=['POST'])
 def criar_maleta():
     data = request.get_json()
-    required = ['nome', 'codigo_maleta']
-    if not all(k in data for k in required):
-        return jsonify({"message": "Nome e código obrigatórios"}), 400
+    nome = data.get('nome')
+    codigo_maleta = data.get('codigo_maleta') or f"MAL-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+    descricao = data.get('descricao', '')
+    composicao = data.get('composicao', [])  # lista de {"instrumento_id": int, "quantidade_ideal": int}
+
+    if not nome:
+        return jsonify({"success": False, "message": "Nome da maleta obrigatório"}), 400
 
     maleta = Maleta(
-        nome=data['nome'],
-        codigo_maleta=data['codigo_maleta'],
-        descricao=data.get('descricao')
+        nome=nome,
+        codigo_maleta=codigo_maleta,
+        descricao=descricao
     )
     db.session.add(maleta)
-    db.session.flush()
+    db.session.flush()  # pra ter o ID
 
-    composicao = data.get('composicao', [])
     for item in composicao:
-        inst = Instrumento.query.get(item['instrumento_id'])
-        if not inst:
+        instrumento_id = item.get('instrumento_id')
+        qtd = item.get('quantidade_ideal', 1)
+
+        if not instrumento_id:
             db.session.rollback()
-            return jsonify({"message": f"Instrumento ID {item['instrumento_id']} não existe"}), 404
+            return jsonify({"success": False, "message": "Instrumento ID obrigatório na composição"}), 400
+
+        instrumento = Instrumento.query.get(instrumento_id)
+        if not instrumento:
+            db.session.rollback()
+            return jsonify({"success": False, "message": f"Instrumento ID {instrumento_id} não encontrado"}), 404
+
+        # Insere na tabela de associação (maleta_instrumento)
         db.session.execute(
             maleta_instrumento.insert().values(
                 maleta_id=maleta.id,
-                instrumento_id=item['instrumento_id'],
-                quantidade_ideal=item.get('quantidade_ideal', 1)
+                instrumento_id=instrumento_id,
+                quantidade_ideal=qtd
             )
         )
+
     db.session.commit()
-    return jsonify({"message": "Maleta criada", "id": maleta.id}), 201
+    return jsonify({
+        "success": True,
+        "message": "Maleta criada com sucesso!",
+        "maleta": {
+            "id": maleta.id,
+            "nome": maleta.nome,
+            "codigo_maleta": maleta.codigo_maleta
+        }
+    }), 201
 
 # ==================== MOVIMENTAÇÕES ====================
 @api_bp.route('/movimentacoes', methods=['POST'])
@@ -543,3 +543,73 @@ def get_inventory():
             "success": False,
             "message": "Erro interno ao carregar inventário"
         }), 500
+        
+# ==================== RELATÓRIO DE MOVIMENTAÇÕES ====================
+
+@api_bp.route('/reports/movement', methods=['GET'])
+def get_reports_movement():
+    try:
+        # Últimos 12 meses
+        end_date = datetime.now()
+        start_date = end_date - relativedelta(months=11)
+        start_date = start_date.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+        # Todas as movimentações (sem filtro por data por enquanto, pra garantir dados)
+        movimentacoes = Movimentacao.query.all()
+
+        # Inicializa meses
+        monthly_data = {}
+        current = start_date
+        for i in range(12):
+            month_key = current.strftime("%b %Y")
+            monthly_data[month_key] = {"entry": 0, "exit": 0}
+            current += relativedelta(months=1)
+
+        # Agrupa
+        for mov in movimentacoes:
+            if mov.data is None:
+                continue  # pula movimentações sem data
+            month_key = mov.data.strftime("%b %Y")
+            if month_key in monthly_data:
+                if mov.tipo == "entrada":
+                    monthly_data[month_key]["entry"] += mov.quantidade
+                elif mov.tipo == "saida":
+                    monthly_data[month_key]["exit"] += mov.quantidade
+
+        labels = list(monthly_data.keys())
+        entries = [monthly_data[m]["entry"] for m in monthly_data]
+        exits = [monthly_data[m]["exit"] for m in monthly_data]
+
+        # Transações recentes
+        recent_trans = Movimentacao.query.order_by(Movimentacao.data.desc()).limit(20).all()
+
+        transactions = []
+        for t in recent_trans:
+            if t.data is None:
+                date_str = "Data não registrada"
+            else:
+                date_str = t.data.strftime("%Y-%m-%d %H:%M")
+
+            transactions.append({
+                "id": f"MOV{t.id:05d}",
+                "category": t.instrumento.categoria.nome if t.instrumento and t.instrumento.categoria else "Sem categoria",
+                "product": t.instrumento.nome if t.instrumento else "Produto desconhecido",
+                "qty": t.quantidade,
+                "movement": "Entry" if t.tipo == "entrada" else "Exit",
+                "date": date_str,
+                "user": t.responsavel or "Sistema"
+            })
+
+        return jsonify({
+            "success": True,
+            "chart": {
+                "labels": labels,
+                "entries": entries,
+                "exits": exits
+            },
+            "transactions": transactions
+        })
+
+    except Exception as e:
+        current_app.logger.error(f"Erro em /reports/movement: {str(e)}")
+        return jsonify({"success": False, "message": "Erro ao gerar relatório"}), 500

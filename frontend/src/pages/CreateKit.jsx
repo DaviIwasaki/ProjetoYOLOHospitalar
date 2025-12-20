@@ -3,7 +3,7 @@ import "../styles/CreateKit.css";
 
 const CreateKit = () => {
   // Estado simulado para a lista de produtos
-  const [items, setItems] = useState([
+  const [items] = useState([
     { id: 1, name: "Bisturi Descartável #15", code: "INS-001", qty: 2 },
     { id: 2, name: "Pinça Anatômica 14cm", code: "INS-045", qty: 1 },
     { id: 3, name: "Tesoura Cirúrgica Reta", code: "INS-022", qty: 1 },
