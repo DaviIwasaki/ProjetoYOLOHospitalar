@@ -99,7 +99,7 @@ def criar_instrumento():
         db.session.rollback()
         return jsonify({"message": "Código interno já existe"}), 409
 
-# ==================== MALETAS ====================
+# ==================== CRIAR MALETA ====================
 @api_bp.route('/maletas', methods=['POST'])
 def criar_maleta():
     data = request.get_json()
@@ -630,3 +630,142 @@ def listar_instrumentos_select():
         "nome": i.nome,
         "codigo": i.codigo_interno
     } for i in insts])
+
+# ==================== MONTAR MALETA ====================
+# Em app/routes/api.py
+@api_bp.route('/maletas/montar', methods=['POST'])
+def montar_maleta():
+    data = request.get_json()
+    maleta_id = data.get('maleta_id')
+    responsavel = data.get('responsavel', 'Sistema')
+    notas = data.get('notas', '')
+
+    if not maleta_id:
+        return jsonify({"success": False, "message": "ID da maleta obrigatório"}), 400
+
+    maleta = Maleta.query.get(maleta_id)
+    if not maleta:
+        return jsonify({"success": False, "message": "Maleta não encontrada"}), 404
+
+    # Pega composição ideal
+    composicao = db.session.execute(
+        maleta_instrumento.select().where(maleta_instrumento.c.maleta_id == maleta_id)
+    ).fetchall()
+
+    if not composicao:
+        return jsonify({"success": False, "message": "Maleta sem itens definidos"}), 400
+
+    # Verifica estoque
+    for item in composicao:
+        inst = Instrumento.query.get(item.instrumento_id)
+        if inst.quantidade_estoque < item.quantidade_ideal:
+            return jsonify({
+                "success": False, 
+                "message": f"Estoque insuficiente para {inst.nome}: {inst.quantidade_estoque} disponível, {item.quantidade_ideal} necessário"
+            }), 400
+
+    # Gera SAÍDAS e atualiza estoque
+    for item in composicao:
+        inst = Instrumento.query.get(item.instrumento_id)
+        qtd = item.quantidade_ideal
+
+        mov = Movimentacao(
+            instrumento_id=inst.id,
+            tipo='saida',
+            quantidade=qtd,
+            responsavel=responsavel,
+            origem_destino=f"Montagem da maleta {maleta.nome}",
+            notas=notas
+        )
+        db.session.add(mov)
+        inst.quantidade_estoque -= qtd
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": f"Maleta '{maleta.nome}' montada com sucesso! Itens removidos do estoque."
+    }), 201
+    
+# ==================== LISTAR MALETAS ====================
+    
+@api_bp.route('/maletas', methods=['GET'])
+def listar_maletas():
+    try:
+        maletas = Maleta.query.all()
+        result = []
+        for m in maletas:
+            # Composição
+            composicao = db.session.execute(
+                maleta_instrumento.select().where(maleta_instrumento.c.maleta_id == m.id)
+            ).fetchall()
+
+            itens = []
+            for row in composicao:
+                inst = Instrumento.query.get(row.instrumento_id)
+                if inst:
+                    itens.append({
+                        "instrumento_id": inst.id,
+                        "nome": inst.nome,
+                        "codigo": inst.codigo_interno,
+                        "quantidade_ideal": row.quantidade_ideal
+                    })
+
+            result.append({
+                "id": m.id,
+                "nome": m.nome,
+                "codigo_maleta": m.codigo_maleta,
+                "descricao": m.descricao,
+                "composicao": itens,
+                "total_itens": len(itens)
+            })
+
+        return jsonify(result)
+    except Exception as e:
+        current_app.logger.error(f"Erro em GET /maletas: {str(e)}")
+        return jsonify({"success": False, "message": "Erro ao listar maletas"}), 500
+    
+# ==================== RETORNAR MALETA ====================
+@api_bp.route('/maletas/retornar', methods=['POST'])
+def retornar_maleta():
+    data = request.get_json()
+    maleta_id = data.get('maleta_id')
+    responsavel = data.get('responsavel', 'Sistema')
+    notas = data.get('notas', '')
+    detectados = data.get('detectados', [])  # lista de {"instrumento_id": id, "quantidade": int}
+
+    if not maleta_id:
+        return jsonify({"success": False, "message": "ID da maleta obrigatório"}), 400
+
+    maleta = Maleta.query.get(maleta_id)
+    if not maleta:
+        return jsonify({"success": False, "message": "Maleta não encontrada"}), 404
+
+    composicao_ideal = db.session.execute(
+        maleta_instrumento.select().where(maleta_instrumento.c.maleta_id == maleta_id)
+    ).fetchall()
+
+    # Gera ENTRADAS só pros itens detectados
+    for det in detectados:
+        inst_id = det.get('instrumento_id')
+        qtd = det.get('quantidade', 1)
+
+        inst = Instrumento.query.get(inst_id)
+        if inst:
+            mov = Movimentacao(
+                instrumento_id=inst_id,
+                tipo='entrada',
+                quantidade=qtd,
+                responsavel=responsavel,
+                origem_destino=f"Retorno da maleta {maleta.nome}",
+                notas=notas
+            )
+            db.session.add(mov)
+            inst.quantidade_estoque += qtd
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "message": "Retorno registrado! Estoque atualizado com itens detectados."
+    }), 201
