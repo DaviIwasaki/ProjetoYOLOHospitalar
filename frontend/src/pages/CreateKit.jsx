@@ -1,22 +1,101 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/CreateKit.css";
 
 const CreateKit = () => {
-  // Estado simulado para a lista de produtos
-  const [items] = useState([
-    { id: 1, name: "Bisturi Descartável #15", code: "INS-001", qty: 2 },
-    { id: 2, name: "Pinça Anatômica 14cm", code: "INS-045", qty: 1 },
-    { id: 3, name: "Tesoura Cirúrgica Reta", code: "INS-022", qty: 1 },
-  ]);
+  const [nome, setNome] = useState("");
+  const [tipo, setTipo] = useState("Cirurgia Geral");
+  const [itens, setItens] = useState([]); // {id, nome, code, qty}
+  const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Busca instrumentos
+  useEffect(() => {
+    if (search.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    fetch(`${window.location.origin}/api/instrumentos/select?search=${encodeURIComponent(search)}`)
+      .then(res => res.json())
+      .then(data => setSuggestions(data))
+      .catch(() => setSuggestions([]));
+  }, [search]);
+
+  const adicionarItem = (inst) => {
+    const existente = itens.find(i => i.id === inst.id);
+    if (existente) {
+      setItens(itens.map(i => i.id === inst.id ? {...i, qty: i.qty + 1} : i));
+    } else {
+      setItens([...itens, {id: inst.id, nome: inst.nome, code: inst.codigo, qty: 1}]);
+    }
+    setSearch("");
+    setSuggestions([]);
+  };
+
+  const ajustarQty = (id, delta) => {
+    setItens(itens.map(i => {
+      if (i.id === id) {
+        const newQty = i.qty + delta;
+        return newQty > 0 ? {...i, qty: newQty} : null;
+      }
+      return i;
+    }).filter(Boolean));
+  };
+
+  const removerItem = (id) => {
+    setItens(itens.filter(i => i.id !== id));
+  };
+
+  const salvarMaleta = async () => {
+    if (!nome.trim()) {
+      setMessage("Nome da maleta obrigatório");
+      return;
+    }
+    if (itens.length === 0) {
+      setMessage("Adicione pelo menos um item");
+      return;
+    }
+
+    setSaving(true);
+    setMessage("");
+
+    const payload = {
+      nome: nome.trim(),
+      descricao: `Maleta para ${tipo}`,
+      composicao: itens.map(i => ({
+        instrumento_id: i.id,
+        quantidade_ideal: i.qty
+      }))
+    };
+
+    try {
+      const res = await fetch(`${window.location.origin}/api/maletas`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setMessage("Maleta criada com sucesso!");
+        setTimeout(() => window.location.href = "/dashboard", 2000); // ou /maletas-list
+      } else {
+        setMessage(data.message || "Erro ao salvar");
+      }
+    // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      setMessage("Erro de conexão");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    // 1. CONTAINER ESTRUTURAL 
     <div className="kit-wrapper">
-      
-      {/* 2. HEADER  */}
       <header className="kit-header">
-        <button className="back-btn" onClick={() => window.history.back()}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <button className="back-btn" onClick={() => window.location.href = "/dashboard"}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
@@ -24,10 +103,7 @@ const CreateKit = () => {
         <h1 className="kit-title">Criar Maleta</h1>
       </header>
 
-      {/* 3. CONTEÚDO  */}
       <main className="kit-content">
-        
-        {/* Card: Detalhes */}
         <section className="kit-section">
           <h3 className="section-title">Detalhes do Kit</h3>
           
@@ -37,62 +113,86 @@ const CreateKit = () => {
               type="text" 
               className="form-input"
               placeholder="Ex: Kit Pequena Cirurgia"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
             />
           </div>
 
           <div className="form-group">
             <label className="form-label">Tipo de Procedimento</label>
-            <select className="form-input bg-white">
+            <select className="form-input bg-white" value={tipo} onChange={(e) => setTipo(e.target.value)}>
               <option>Cirurgia Geral</option>
               <option>Ortopedia</option>
               <option>Cardiologia</option>
               <option>Emergência</option>
+              <option>Teste YOLO (Cell Phone + Laptop)</option>
             </select>
           </div>
         </section>
 
-        {/* Card: Lista de Itens */}
         <section className="kit-list-section">
           <div className="list-header">
-            <h3 className="section-title">Itens do Kit ({items.length})</h3>
+            <h3 className="section-title">Itens do Kit ({itens.length})</h3>
+            <div className="search-add">
+              <input
+                type="text"
+                placeholder="Buscar produto..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="search-input-small"
+              />
+              {suggestions.length > 0 && (
+                <div className="suggestions">
+                  {suggestions.map(s => (
+                    <div key={s.id} className="suggestion-item" onClick={() => adicionarItem(s)}>
+                      {s.nome} ({s.codigo})
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="items-list">
-            {items.map((item) => (
-              <div key={item.id} className="kit-item">
-                <div className="item-info">
-                  <p className="item-name">{item.name}</p>
-                  <p className="item-code">Ref: {item.code}</p>
+            {itens.length === 0 ? (
+              <p style={{textAlign: "center", color: "#999", padding: "20px"}}>
+                Nenhum item adicionado ainda
+              </p>
+            ) : (
+              itens.map((item) => (
+                <div key={item.id} className="kit-item">
+                  <div className="item-info">
+                    <p className="item-name">{item.nome}</p>
+                    <p className="item-code">Ref: {item.code}</p>
+                  </div>
+                  
+                  <div className="qty-control">
+                    <button className="qty-btn" onClick={() => ajustarQty(item.id, -1)}>−</button>
+                    <span className="qty-value">{item.qty}</span>
+                    <button className="qty-btn" onClick={() => ajustarQty(item.id, 1)}>+</button>
+                    <button className="remove-btn" onClick={() => removerItem(item.id)}>×</button>
+                  </div>
                 </div>
-                
-                {/* Controlador de Quantidade */}
-                <div className="qty-control">
-                  <button className="qty-btn">−</button>
-                  <span className="qty-value">{item.qty}</span>
-                  <button className="qty-btn">+</button>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
 
-            {/* Botão de Adicionar Produto */}
-            <button className="add-product-btn">
-              <div className="icon-circle">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-              </div>
-              <span>Adicionar Produto</span>
-            </button>
+            <div className="add-hint">
+              Digite para buscar e adicionar itens (ex: "cell", "laptop", "person")
+            </div>
           </div>
         </section>
       </main>
 
-      {/* 4. RODAPÉ DE AÇÃO */}
       <footer className="kit-footer">
-        <button className="btn-cancel">Cancelar</button>
-        <button className="btn-save">Salvar Maleta</button>
+        <button className="btn-cancel" onClick={() => window.location.href = "/dashboard"}>
+          Cancelar
+        </button>
+        <button className="btn-save" onClick={salvarMaleta} disabled={saving}>
+          {saving ? "Salvando..." : "Salvar Maleta"}
+        </button>
       </footer>
+
+      {message && <div className="message-overlay">{message}</div>}
     </div>
   );
 };

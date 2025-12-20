@@ -613,3 +613,20 @@ def get_reports_movement():
     except Exception as e:
         current_app.logger.error(f"Erro em /reports/movement: {str(e)}")
         return jsonify({"success": False, "message": "Erro ao gerar relatório"}), 500
+    
+# ==================== LISTA DE INSTRUMENTOS PARA SELECT ====================
+@api_bp.route('/instrumentos/select', methods=['GET'])
+def listar_instrumentos_select():
+    search = request.args.get('search', '')
+    query = Instrumento.query
+    if search:
+        query = query.filter(
+            Instrumento.nome.ilike(f"%{search}%") |
+            Instrumento.codigo_interno.ilike(f"%{search}%")
+        )
+    insts = query.order_by(Instrumento.nome).limit(50).all()
+    return jsonify([{
+        "id": i.id,
+        "nome": i.nome,
+        "codigo": i.codigo_interno
+    } for i in insts])
