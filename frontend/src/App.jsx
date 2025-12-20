@@ -17,6 +17,7 @@ import ManualProductRegister from "./pages/ManualProductRegister";
 import CreateKit from "./pages/CreateKit";
 import ProductRecognitionResult from "./pages/ProductRecognitionResult";
 import MaletasList from "./pages/MaletasList";
+import ValidateKit from "./pages/ValidateKit";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         />
         <Route path="/create-kit" element={<CreateKit />} />
         <Route path="/maletas-list" element={<MaletasList />} />
+        <Route path="/validate-kit" element={<ValidateKit />} />
         <Route
           path="/productRecognitionResult"
           element={<ProductRecognitionResult />}

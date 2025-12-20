@@ -728,44 +728,45 @@ def listar_maletas():
 # ==================== RETORNAR MALETA ====================
 @api_bp.route('/maletas/retornar', methods=['POST'])
 def retornar_maleta():
-    data = request.get_json()
-    maleta_id = data.get('maleta_id')
-    responsavel = data.get('responsavel', 'Sistema')
-    notas = data.get('notas', '')
-    detectados = data.get('detectados', [])  # lista de {"instrumento_id": id, "quantidade": int}
+    try:
+        data = request.get_json()
+        maleta_id = data.get('maleta_id')
+        responsavel = data.get('responsavel', 'Sistema')
+        notas = data.get('notas', '')
+        detectados = data.get('detectados', [])  # [{"instrumento_id": id, "quantidade": int}]
 
-    if not maleta_id:
-        return jsonify({"success": False, "message": "ID da maleta obrigatório"}), 400
+        if not maleta_id:
+            return jsonify({"success": False, "message": "ID da maleta obrigatório"}), 400
 
-    maleta = Maleta.query.get(maleta_id)
-    if not maleta:
-        return jsonify({"success": False, "message": "Maleta não encontrada"}), 404
+        maleta = Maleta.query.get(maleta_id)
+        if not maleta:
+            return jsonify({"success": False, "message": "Maleta não encontrada"}), 404
 
-    composicao_ideal = db.session.execute(
-        maleta_instrumento.select().where(maleta_instrumento.c.maleta_id == maleta_id)
-    ).fetchall()
+        # Gera entradas para itens detectados
+        for det in detectados:
+            inst_id = det.get('instrumento_id')
+            qtd = det.get('quantidade', 1)
 
-    # Gera ENTRADAS só pros itens detectados
-    for det in detectados:
-        inst_id = det.get('instrumento_id')
-        qtd = det.get('quantidade', 1)
+            inst = Instrumento.query.get(inst_id)
+            if inst:
+                mov = Movimentacao(
+                    instrumento_id=inst_id,
+                    tipo='entrada',
+                    quantidade=qtd,
+                    responsavel=responsavel,
+                    origem_destino=f"Retorno da maleta {maleta.nome}",
+                    notas=notas
+                )
+                db.session.add(mov)
+                inst.quantidade_estoque += qtd
 
-        inst = Instrumento.query.get(inst_id)
-        if inst:
-            mov = Movimentacao(
-                instrumento_id=inst_id,
-                tipo='entrada',
-                quantidade=qtd,
-                responsavel=responsavel,
-                origem_destino=f"Retorno da maleta {maleta.nome}",
-                notas=notas
-            )
-            db.session.add(mov)
-            inst.quantidade_estoque += qtd
+        db.session.commit()
 
-    db.session.commit()
+        return jsonify({
+            "success": True,
+            "message": "Retorno registrado com sucesso! Itens detectados adicionados ao estoque."
+        }), 201
 
-    return jsonify({
-        "success": True,
-        "message": "Retorno registrado! Estoque atualizado com itens detectados."
-    }), 201
+    except Exception as e:
+        current_app.logger.error(f"Erro em /maletas/retornar: {str(e)}")
+        return jsonify({"success": False, "message": "Erro interno ao registrar retorno"}), 500

@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f7f9fc;
+}
+
+.validate-kit-container {
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
+  margin: 0 auto;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Header fixo */
+.kit-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 10;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.kit-title {
+  flex: 1;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  margin-right: -40px; /* compensa o botão de volta */
+}
+
+/* Área da câmera fixa (não rola) */
+.camera-fixed {
+  flex-shrink: 0;
+  padding: 20px;
+  background: #f7f9fc;
+}
+
+/* Câmera um pouco menor (altura ajustada) */
+.scanner-frame {
+  width: 100%;
+  height: 40vh; /* Reduzido de 50vh pra 45vh pra dar mais espaço abaixo */
+  /*aspect-ratio: 4/3;*/
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #000;
+}
+
+.scan-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+.scan-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.scan-line {
+  width: 100%;
+  height: 2px;
+  background: #00ff00;
+  box-shadow: 0 0 8px #00ff00;
+  position: absolute;
+  top: 0;
+  animation: scanAnim 2.5s infinite linear;
+}
+
+@keyframes scanAnim {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Botão do scanner */
+.scanner-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  width: 100%;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+/* Área rolável (TUDO ABAIXO DA CÂMERA) */
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 40px 20px;
+  background: #f7f9fc;
+  -webkit-overflow-scrolling: touch;
+}
+
+.results-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+
+.results-card h3 {
+  margin-bottom: 16px;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.message-overlay {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4CAF50;
+  color: white;
+  padding: 16px 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  z-index: 1000;
+  font-size: 16px;
+}
