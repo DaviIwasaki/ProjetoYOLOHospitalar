@@ -770,3 +770,33 @@ def retornar_maleta():
     except Exception as e:
         current_app.logger.error(f"Erro em /maletas/retornar: {str(e)}")
         return jsonify({"success": False, "message": "Erro interno ao registrar retorno"}), 500
+
+# ==================== SUMÁRIO DASHBOARD ====================
+@api_bp.route('/dashboard/summary', methods=['GET'])
+def get_dashboard_summary():
+    try:
+        total_itens = db.session.query(db.func.sum(Instrumento.quantidade_estoque)).scalar() or 0
+        low_stock = Instrumento.query.filter(Instrumento.quantidade_estoque < Instrumento.estoque_minimo).count()
+        total_maletas = Maleta.query.count()
+
+        # Quantidade por categoria
+        categorias = db.session.query(
+            Categoria.nome,
+            db.func.sum(Instrumento.quantidade_estoque).label('total')
+        ).join(Instrumento).group_by(Categoria.id).all()
+
+        categories_data = {
+            "labels": [c.nome or "Sem categoria" for c in categorias],
+            "data": [c.total or 0 for c in categorias]
+        }
+
+        return jsonify({
+            "success": True,
+            "total_itens": int(total_itens),
+            "low_stock": low_stock,
+            "total_maletas": total_maletas,
+            "categories": categories_data
+        })
+    except Exception as e:
+        current_app.logger.error(f"Erro em /dashboard/summary: {str(e)}")
+        return jsonify({"success": False, "message": "Erro ao carregar resumo"}), 500
