@@ -1,20 +1,13 @@
 import React from "react";
 import "../styles/NotRecognized.css";
-import logo from "../assets/yolo-hospitalar-logo.png";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 export default function NotRecognized() {
   return (
     <div className="not-recognized-page">
       {/* Header (standard) */}
-      <header className="std-header">
-        <div className="std-header-left">
-          <img src={logo} alt="YOLO Hospitalar" className="std-logo" />
-        </div>
-        <div className="std-header-center" />
-        <div className="std-header-right">
-          <button className="icon-btn" aria-label="notifications">🔔</button>
-        </div>
-      </header>
+      <HeaderPadronizado title="Produto Não Reconhecido" />
 
       {/* Main content */}
       <main className="not-recognized-container">
@@ -38,27 +31,7 @@ export default function NotRecognized() {
       </main>
 
       {/* Footer (standard) */}
-      <footer className="std-footer">
-        <button className="nav-item">
-          <span className="nav-icon">🏠</span>
-          <span className="nav-text">Home</span>
-        </button>
-
-        <button className="nav-item active">
-          <span className="nav-icon">📷</span>
-          <span className="nav-text">Scan</span>
-        </button>
-
-        <button className="nav-item">
-          <span className="nav-icon">🕘</span>
-          <span className="nav-text">History</span>
-        </button>
-
-        <button className="nav-item">
-          <span className="nav-icon">👤</span>
-          <span className="nav-text">Profile</span>
-        </button>
-      </footer>
+      <FooterPadronizado active="home" />
     </div>
   );
 }

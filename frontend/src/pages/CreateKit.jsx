@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/CreateKit.css";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 const CreateKit = () => {
   const [nome, setNome] = useState("");
@@ -93,15 +95,7 @@ const CreateKit = () => {
 
   return (
     <div className="kit-wrapper">
-      <header className="kit-header">
-        <button className="back-btn" onClick={() => window.location.href = "/dashboard"}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <h1 className="kit-title">Criar Maleta</h1>
-      </header>
+      <HeaderPadronizado title="Criar Maleta" />
 
       <main className="kit-content">
         <section className="kit-section">

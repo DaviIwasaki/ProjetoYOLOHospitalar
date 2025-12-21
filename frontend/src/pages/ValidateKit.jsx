@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 import "../styles/ValidateKit.css";
 import scanImage from "../assets/scan-preview.png";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 const ValidateKit = () => {
   const videoRef = useRef(null);
@@ -57,6 +59,7 @@ const ValidateKit = () => {
     });
 
     return () => socket.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maletaSelecionada]); // reconecta se mudar maleta
 
   const drawBoxes = (boxes) => {
@@ -247,25 +250,7 @@ const ValidateKit = () => {
   return (
     <div className="validate-kit-container">
       {/* Header fixo */}
-      <header className="kit-header">
-        <button
-          className="back-btn"
-          onClick={() => (window.location.href = "/maletas-list")}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <h1 className="kit-title">Validar Maleta</h1>
-      </header>
+      <HeaderPadronizado title="Validar Maleta" />
 
       {/* Área fixa: câmera + botão iniciar/parar + status */}
       <div className="camera-fixed">

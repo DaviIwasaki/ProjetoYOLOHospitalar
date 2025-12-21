@@ -12,6 +12,7 @@ import {
 } from "chart.js";
 import logo from "../assets/yolo-hospitalar-logo.png";
 import { FiFilter } from "react-icons/fi";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -156,9 +157,7 @@ const Reports = () => {
         </section>
       </main>
 
-      <footer className="reports-footer">
-        {/* Seu footer aqui */}
-      </footer>
+      <FooterPadronizado active="home" />
     </div>
   );
 };

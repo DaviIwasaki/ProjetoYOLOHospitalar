@@ -18,6 +18,9 @@ import CreateKit from "./pages/CreateKit";
 import ProductRecognitionResult from "./pages/ProductRecognitionResult";
 import MaletasList from "./pages/MaletasList";
 import ValidateKit from "./pages/ValidateKit";
+import HeaderPadronizado from "./components/HeaderPadronizado";
+import FooterPadronizado from "./components/FooterPadronizado";
+
 
 function App() {
   return (
@@ -67,6 +70,8 @@ function App() {
           element={<RegisterExitSuccess />}
         />
         <Route path="/product-profile" element={<ProductProfile />} />
+        <Route path="/headerPadronizado" element={<HeaderPadronizado />} />
+        <Route path="/footerPadronizado" element={<FooterPadronizado />} />
       </Routes>
     </Router>
   );

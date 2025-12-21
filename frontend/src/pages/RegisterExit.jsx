@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/RegisterEntry.css"; // reuse o mesmo CSS
-import logo from "../assets/yolo-hospitalar-logo.png";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 export default function RegisterExit() {
   const [product, setProduct] = useState(null);
@@ -74,13 +75,7 @@ export default function RegisterExit() {
 
   return (
     <div className="register-entry-page">
-      <header className="register-entry-header">
-        <div className="register-entry-header-left">
-          <img src={logo} alt="YOLO Hospitalar" className="register-entry-logo" />
-          <span className="register-entry-brand">YOLO Hospitalar</span>
-        </div>
-        <h1 className="register-entry-title">Registrar Saída</h1>
-      </header>
+      <HeaderPadronizado title="Registrar Saída" />
 
       <main className="register-entry-main">
         <form className="register-entry-form" onSubmit={handleSubmit}>
@@ -183,6 +178,7 @@ export default function RegisterExit() {
           </button>
         </form>
       </main>
+      <FooterPadronizado active="home" />
     </div>
   );
 }

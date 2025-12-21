@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../AppLayout.css";
 import "../styles/ProductRecognitionResult.css";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 const ProductRecognitionResult = () => {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const ProductRecognitionResult = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1️⃣ Recupera dados do reconhecimento do localStorage
+  // Recupera dados do reconhecimento do localStorage
   useEffect(() => {
     const data = localStorage.getItem("recognitionData");
 
@@ -28,7 +30,7 @@ const ProductRecognitionResult = () => {
     }
   }, [navigate]);
 
-  // 2️⃣ Busca produto no backend usando a classe YOLO
+  // Busca produto no backend usando a classe YOLO
   useEffect(() => {
     if (!recognitionData) return;
 
@@ -52,7 +54,7 @@ const ProductRecognitionResult = () => {
       } catch (err) {
         console.warn("Produto não encontrado no banco, usando mock:", err);
 
-        // 🔧 MOCK TEMPORÁRIO (classes COCO)
+        // MOCK TEMPORÁRIO (classes COCO)
         setProduct({
           id: null,
           nome: detectedItem.class

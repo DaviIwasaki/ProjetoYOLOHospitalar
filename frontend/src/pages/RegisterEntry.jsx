@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/RegisterEntry.css";
-import logo from "../assets/yolo-hospitalar-logo.png";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 export default function RegisterEntry() {
   const [product, setProduct] = useState(null);
@@ -81,17 +82,7 @@ export default function RegisterEntry() {
 
   return (
     <div className="register-entry-page">
-      <header className="register-entry-header">
-        <div className="register-entry-header-left">
-          <img
-            src={logo}
-            alt="YOLO Hospitalar"
-            className="register-entry-logo"
-          />
-          <span className="register-entry-brand">YOLO Hospitalar</span>
-        </div>
-        <h1 className="register-entry-title">Registrar Entrada</h1>
-      </header>
+      <HeaderPadronizado title="Registrar Entrada" />
 
       <main className="register-entry-main">
         <form className="register-entry-form" onSubmit={handleSubmit}>
@@ -204,6 +195,7 @@ export default function RegisterEntry() {
           </button>
         </form>
       </main>
+      <FooterPadronizado active="home" />
     </div>
   );
 }

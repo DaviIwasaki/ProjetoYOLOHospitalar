@@ -1,20 +1,13 @@
 import React from "react";
 import "../styles/ManualProductRegister.css";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 function ManualProductRegister() {
   return (
     <div className="mobile-container">
       {/* ===== Header ===== */}
-      <header className="page-header">
-        <button className="icon-btn-header back-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <h1 className="header-title">Product Registration</h1>
-        <div className="header-spacer"></div> {/* Espaço vazio para equilibrar o layout */}
-      </header>
+      <HeaderPadronizado title="Product Registration" />
 
       {/* ===== Content Scroll ===== */}
       <div className="content-scroll form-content">
@@ -117,10 +110,7 @@ function ManualProductRegister() {
       </div>
 
       {/* ===== Footer Actions ===== */}
-      <footer className="footer-actions">
-        <button className="btn-footer cancel">Cancel</button>
-        <button className="btn-footer save">Save Product</button>
-      </footer>
+      <FooterPadronizado active="home" />
     </div>
   );
 }

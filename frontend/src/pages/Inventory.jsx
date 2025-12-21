@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Inventory.css";
 import "../AppLayout.css";
-import logo from "../assets/yolo-hospitalar-logo.png";
 import { FiSearch, FiSliders } from "react-icons/fi";
 import { FaClock } from "react-icons/fa";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 const Inventory = () => {
   const [items, setItems] = useState([]);
@@ -57,20 +58,7 @@ const Inventory = () => {
 
   return (
     <div className="inventory-container">
-      <header className="inventory-header">
-        <div className="inventory-header-left">
-          <span className="back-arrow" onClick={() => window.location.href = "/dashboard"}>←</span>
-          <img src={logo} alt="YOLO Hospitalar Logo" className="inventory-logo" />
-          <h2>YOLO Hospitalar</h2>
-        </div>
-        <div className="inventory-header-icons">
-          <span className="icon">🔔</span>
-        </div>
-      </header>
-
-      <header className="inventory-header">
-        <h2>Inventário & Rastreabilidade</h2>
-      </header>
+      <HeaderPadronizado title="Inventário e Rastreabilidade" />
 
       <div className="inventory-search">
         <form className="search-bar" onSubmit={handleSearch}>
@@ -136,6 +124,7 @@ const Inventory = () => {
           ))
         )}
       </div>
+      <FooterPadronizado active="home" />
     </div>
   );
 };

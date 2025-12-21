@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import "../styles/ProductProfile.css";
 import { FiArrowLeft } from "react-icons/fi";
 import { FaBox, FaTag, FaWarehouse, FaClock, FaUser } from "react-icons/fa";
-import logo from "../assets/yolo-hospitalar-logo.png";
 import sampleProduct from "../assets/sample-product.jpg";
+import HeaderPadronizado from "../components/HeaderPadronizado";
+import FooterPadronizado from "../components/FooterPadronizado";
 
 const ProductProfile = () => {
   const [product, setProduct] = useState(null);
@@ -52,16 +53,8 @@ const ProductProfile = () => {
 
   return (
     <div className="product-profile-container">
-      <header className="productProfile-header">
-        <div className="productProfile-header-left">
-          <span className="back-arrow" onClick={() => window.location.href = "/scanner"}>←</span>
-          <img src={logo} alt="YOLO Hospitalar Logo" className="productProfile-logo" />
-          <h2>YOLO Hospitalar</h2>
-        </div>
-        <div className="productProfile-header-icons">
-          <span className="icon">🔔</span>
-        </div>
-      </header>
+
+      <HeaderPadronizado title="Perfil do Produto" />
 
       <main className="product-content">
         <div className="product-card">
@@ -131,6 +124,7 @@ const ProductProfile = () => {
           Editar Produto
         </button>
       </main>
+      <FooterPadronizado active="home" />
     </div>
   );
 };
