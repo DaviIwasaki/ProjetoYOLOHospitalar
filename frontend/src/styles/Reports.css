@@ -163,13 +163,17 @@ html, body {
 }
 
 .table-responsive {
-  overflow-x: auto; 
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .transactions-table {
   width: 100%;
+  min-width: 650px;
   border-collapse: collapse;
 }
+
 
 .transactions-table th {
   text-align: left;

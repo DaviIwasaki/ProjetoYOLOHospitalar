@@ -25,14 +25,14 @@ const ProductProfile = () => {
       // Busca detalhes completos + histórico
       if (parsed.id) {
         fetch(`${window.location.origin}/api/products/${parsed.id}`)
-          .then(res => res.json())
-          .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             if (data.success) {
               setProduct(data.product);
               setHistory(data.history);
             }
           })
-          .catch(err => console.error("Erro ao carregar detalhes:", err))
+          .catch((err) => console.error("Erro ao carregar detalhes:", err))
           .finally(() => setLoading(false));
       } else {
         setLoading(false);
@@ -44,32 +44,55 @@ const ProductProfile = () => {
   }, []);
 
   if (loading) {
-    return <div className="product-profile-container"><p>Carregando produto...</p></div>;
+    return (
+      <div className="product-profile-container">
+        <p>Carregando produto...</p>
+      </div>
+    );
   }
 
   if (!product) {
-    return <div className="product-profile-container"><p>Produto não encontrado</p></div>;
+    return (
+      <div className="product-profile-container">
+        <p>Produto não encontrado</p>
+      </div>
+    );
   }
 
   return (
     <div className="product-profile-container">
-
       <HeaderPadronizado title="Perfil do Produto" />
 
       <main className="product-content">
         <div className="product-card">
-          <img src={capturedImage || sampleProduct} alt="Produto" className="product-image" />
+          <img
+            src={capturedImage || sampleProduct}
+            alt="Produto"
+            className="product-image"
+          />
           <h3 className="product-title">{product.nome}</h3>
           <div className="product-info">
-            <p><FaBox className="icon" /> Categoria: <span>{product.categoria}</span></p>
-            <p><FaTag className="icon" /> Código: <span>{product.codigo_interno}</span></p>
             <p>
-              <FaBox className="icon" /> Estoque Atual: 
-              <span style={{ 
-                color: product.quantidade_estoque < product.estoque_minimo ? "red" : "green",
-                fontWeight: "bold"
-              }}>
-                {" "}{product.quantidade_estoque}
+              <FaBox className="icon" /> Categoria:{" "}
+              <span>{product.categoria}</span>
+            </p>
+            <p>
+              <FaTag className="icon" /> Código:{" "}
+              <span>{product.codigo_interno}</span>
+            </p>
+            <p>
+              <FaBox className="icon" /> Estoque Atual:
+              <span
+                style={{
+                  color:
+                    product.quantidade_estoque < product.estoque_minimo
+                      ? "red"
+                      : "green",
+                  fontWeight: "bold",
+                }}
+              >
+                {" "}
+                {product.quantidade_estoque}
               </span>
             </p>
           </div>
@@ -78,10 +101,13 @@ const ProductProfile = () => {
         <div className="details-card">
           <h4>Detalhes</h4>
           {product.validade && (
-            <p><strong>Validade:</strong> {product.validade}</p>
+            <p>
+              <strong>Validade:</strong> {product.validade}
+            </p>
           )}
           <p>
-            <FaWarehouse className="icon" /> Estoque Mínimo: {product.estoque_minimo} | Máximo: {product.estoque_maximo}
+            <FaWarehouse className="icon" /> Estoque Mínimo:{" "}
+            {product.estoque_minimo} | Máximo: {product.estoque_maximo}
           </p>
           <p>
             <FaClock className="icon" /> Última atualização: Hoje (via scanner)
@@ -105,14 +131,20 @@ const ProductProfile = () => {
               <tbody>
                 {history.map((h, index) => (
                   <tr key={index}>
-                    <td>{h.date}</td>
-                    <td>
-                      <span className={`type-badge ${h.type === "Entry" ? "entry" : "exit"}`}>
+                    <td data-label="Data">{h.date}</td>
+                    <td data-label="Tipo">
+                      <span
+                        className={`type-badge ${
+                          h.type === "Entry" ? "entry" : "exit"
+                        }`}
+                      >
                         {h.type === "Entry" ? "Entrada" : "Saída"}
                       </span>
                     </td>
-                    <td>{h.qty}</td>
-                    <td><FaUser className="user-icon" /> {h.user}</td>
+                    <td data-label="Qtd">{h.qty}</td>
+                    <td data-label="Responsável">
+                      <FaUser className="user-icon" /> {h.user}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -120,7 +152,10 @@ const ProductProfile = () => {
           )}
         </div>
 
-        <button className="edit-btn" onClick={() => alert("Funcionalidade de edição em desenvolvimento")}>
+        <button
+          className="edit-btn"
+          onClick={() => alert("Funcionalidade de edição em desenvolvimento")}
+        >
           Editar Produto
         </button>
       </main>

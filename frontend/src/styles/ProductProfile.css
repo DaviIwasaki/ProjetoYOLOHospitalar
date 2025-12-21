@@ -201,3 +201,41 @@
     font-size: 0.85rem;
   }
 }
+
+@media (max-width: 480px) {
+
+  .history-table thead {
+    display: none;
+  }
+
+  .history-table,
+  .history-table tbody,
+  .history-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .history-table tr {
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f9fbfc;
+    border: 1px solid #eee;
+  }
+
+  .history-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border: none;
+    font-size: 0.85rem;
+  }
+
+  .history-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #666;
+  }
+}
+
