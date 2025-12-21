@@ -60,15 +60,17 @@ html, body {
 
 /* === MAIN (Área que Rola) === */
 .kit-content {
-  flex: 1; /* Ocupa todo o espaço livre */
-  overflow-y: auto; /* Permite rolagem vertical */
+  flex: 1;
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 1.2rem;
-  /* Espaço visual no final */
-  padding-bottom: 2rem; 
+
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
+
   width: 100%;
   -webkit-overflow-scrolling: touch;
 }
+
 
 /* === SEÇÕES E CARDS === */
 .kit-section {
