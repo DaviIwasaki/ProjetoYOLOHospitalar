@@ -83,49 +83,84 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* === STATUS CARDS === */
+/* Status Cards */
 .status-section {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  width: 100%;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  padding: 20px;
 }
 
 .status-card {
   flex: 1;
-  padding: 1.2rem;
-  border-radius: 16px;
-  color: #fff;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  background: white;
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 110px;
+  min-width: 45%;
+  max-width: 48%;
 }
 
+
+.card-content {
+  text-align: center;
+  width: 100%;
+}
+
+/* Cores */
 .status-card.blue {
   background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
 }
 
 .status-card.yellow {
-  background: linear-gradient(135deg, #fcd77d, #ffc107);
-  color: #333;
+  background: linear-gradient(135deg, #fff3cd, #ffc107);
+  color: #856404;
 }
 
+/* Texto proporcional */
 .status-value {
-  font-size: 1.8rem;
-  font-weight: 700;
-  line-height: 1;
-  margin-bottom: 5px;
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  opacity: 0.9;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .status-sub {
-  display: block;
   font-size: 0.75rem;
-  margin-top: 5px;
-  opacity: 0.8;
+  opacity: 0.85;
+}
+
+/* Mobile pequeno: empilha */
+@media (max-width: 380px) {
+  .status-section {
+    flex-direction: column;
+  }
+  .status-card {
+    height: 130px;
+    min-width: 100%;
+    max-width: 100%;
+    padding: 20px;
+  }
+  .status-value {
+    font-size: 2.2rem;
+  }
 }
 
 /* === QUICK ACTIONS === */
