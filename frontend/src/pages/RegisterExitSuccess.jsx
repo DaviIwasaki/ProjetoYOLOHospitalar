@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/SuccessPage.css";
 import HeaderPadronizado from "../components/HeaderPadronizado";
 import FooterPadronizado from "../components/FooterPadronizado";
 

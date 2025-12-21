@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/RegisterEntrySuccess.css";
+import "../styles/SuccessPage.css";
 import HeaderPadronizado from "../components/HeaderPadronizado";
 import FooterPadronizado from "../components/FooterPadronizado";
 
