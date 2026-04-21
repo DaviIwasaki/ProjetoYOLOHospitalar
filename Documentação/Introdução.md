@@ -73,11 +73,11 @@ O escopo do projeto abrange o desenvolvimento de um sistema que:
 
 | **Categoria** | **Ferramentas / Tecnologias** | **Propósito Principal** |
 | :--- | :--- | :--- |
-| **Plataforma** | **Web (Responsiva)** | Acesso via navegador em computadores e dispositivos móveis, dispensando instalação local. |
+| **Plataforma** | **Web e Mobile (Responsiva)** | Acesso via navegador em computadores e dispositivos móveis, dispensando instalação local. |
 | **Visão Computacional** | **YOLOv8n**, **Ultralytics** | Algoritmo de detecção de objetos em tempo real, leve e otimizado para aplicações rápidas. |
 | **Linguagem** | **Python** | Linguagem principal utilizada para o desenvolvimento do modelo de IA e do *backend*. |
 | **Back-end / Framework** | **Flask**, **Socket.IO** | Flask para estrutura da aplicação e Socket.IO para comunicação bidirecional em tempo real entre cliente e servidor. |
-| **Front-end / Interface** | **React**, **Vite**, **HTML5**, **CSS3** | Criação de uma interface interativa, moderna e responsiva, com renderização eficiente. |
+| **Front-end / Interface** | **React Native**, **Vite**, **HTML5**, **CSS3** | Criação de uma interface interativa, moderna e responsiva, com renderização eficiente. |
 | **Banco de Dados** | **MySQL** | Armazenamento estruturado e seguro de usuários, registros e metadados. |
 | **Hospedagem / Deploy** | **AWS EC2**, **Docker**, **GitHub** | Hospedagem em nuvem com containerização para facilitar a entrega e garantir estabilidade e escalabilidade. |
 | **Bibliotecas de Apoio** | **PyTorch**, **NumPy**, **OpenCV** | Treinamento do modelo, processamento de imagem e manipulação numérica. |
